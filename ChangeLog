@@ -1,9 +1,17 @@
+Wed Jan 26 06:50:14 2000  Nicola Pero  <n.pero@mi.flashnet.it>
+
+	Fixed mixed state stuff so that it is exactly as in macosx 
+	[untested]:  
+	* Headers/AppKit/NSCell.h: Turned _cell.state into a normal int;
+	changed NSMixedState to -1.
+	* Source/NSCell.m ([-setState:]): Rewritten, mixed state support.
+
 Wed Jan 26 02:03:25 2000  Nicola Pero  <n.pero@mi.flashnet.it>
 
 	* Documentation/gnustep-gui.tmpl.texi (Standard Info Panel): Added
 	documentation for [NSApplication -orderFrontInfoPanel:] and
 	[NSApplication -orderFrontInfoPanelWithOptions:].
-	
+
 Mon Jan 24 23:45:30 2000  Nicola Pero  <n.pero@mi.flashnet.it>
 
 	Implemented a standard Info Panel for GNUstep.  To make everyone
