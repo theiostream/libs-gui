@@ -1,3 +1,13 @@
+2000-07-31  Fred Kiefer  <FredKiefer@gmx.de>
+
+	* Source/NSTextView.m
+	Use [drawRect:] from super.
+	* Source/NSText.m
+	Added method [undrawSelectionAsRange:], this only shows the cursor
+	if [shouldDrawInsertionPoint] is YES. In [mouseDown:] only make
+	first responder if editable. Also increase the proposed range to
+	include the last character into the selection.
+	
 2000-07-30  Adam Fedor  <fedor@gnu.org>
 
 	* Source/NSBundleAdditions.m
