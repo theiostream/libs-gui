@@ -1026,8 +1026,6 @@ static inline NSPoint centerSizeInRect(NSSize innerSize, NSRect outerRect)
       return YES;
     }
 
-  [controlView setNeedsDisplayInRect: cellFrame];
-
   NSDebugLog(@"NSCell mouse did not go up in cell\n");
   return NO;				// Otherwise return NO
 }

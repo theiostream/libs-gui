@@ -1537,7 +1537,7 @@ NSAssert([event retainCount] > 0, NSInternalInconsistencyException);
   
   /* If there's only one window left, and that's the one being closed, 
      then we ask the delegate if the app is to be terminated. */
-  if (realcount <= 1)
+  if ((realcount <= 1) && [[notification object] isMainWindow])
     {
       NSLog(@"asking delegate whether to terminate app...");
       if ([delegate respondsToSelector: @selector(applicationShouldTerminateAfterLastWindowClosed:)])

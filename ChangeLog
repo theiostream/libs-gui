@@ -1,3 +1,14 @@
+1999-08-29  Adam Fedor  <fedor@gnu.org>
+
+	* Source/NSCell.m ([NSCell -trackMouse:inRect:ofView:untilMouseUp:]): 
+	Remove setNeedsDisplay, which was causing button to disappear when
+	mouse left bounds.
+
+1999-08-23  Pedro Ivo Andrade Tavares  <ptavares@iname.com>
+
+        * Source/NSApplication.m: fixed a bug where it would ask if it should
+        terminate when a panel over the main window was closed.
+
 Fri Aug 27  8:02:00 1999  Richard Frith-Macdonald <richard@brainstorm.co.uk>
 
         Patch from Nicola Pero <n.pero@mi.flashnet.it> 
