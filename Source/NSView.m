@@ -1703,6 +1703,8 @@ GSSetDragTypes(NSView* obj, NSArray *types)
 
 - (void) setNeedsDisplayInRect: (NSRect)rect
 {
+  NSView	*currentView = _super_view;
+
   /*
    *	Limit to bounds, combine with old _invalidRect, and then check to see
    *	if the result is the same as the old _invalidRect - if it isn't then
@@ -1713,7 +1715,6 @@ GSSetDragTypes(NSView* obj, NSArray *types)
   if (NSEqualRects(rect, _invalidRect) == NO)
     {
       NSView	*firstOpaque = [self opaqueAncestor];
-      NSView	*currentView = _super_view;
 
       _rFlags.needs_display = YES;
       _invalidRect = rect;
@@ -1726,12 +1727,16 @@ GSSetDragTypes(NSView* obj, NSArray *types)
 	  rect = [firstOpaque convertRect: _invalidRect fromView: self];
 	  [firstOpaque setNeedsDisplayInRect: rect];
 	}
-
-      while (currentView)
-	{
-	  currentView->_rFlags.needs_display = YES;
-	  currentView = currentView->_super_view;
-	}
+    }
+  /*
+   * Must make sure that superviews know that we need display.
+   * NB. we may have been marked as needing display and then moved to another
+   * parent, so we can't assume that our parent is marked simply because we are.
+   */
+  while (currentView)
+    {
+      currentView->_rFlags.needs_display = YES;
+      currentView = currentView->_super_view;
     }
 }
 

@@ -1,3 +1,10 @@
+Sat Feb 12 20:27:00 2000  Richard Frith-Macdonald <richard@brainstorm.co.uk>
+
+	* Source/NSView.m: ([setNeedsDisplayInRect:]) change to ensure that
+	superviews are always marked as needing display when we are.
+	* Source/NSPopUpButton.m: ([-encodeWithCoder:]) ([-initWithCoder:])
+	implemented for Gorm.
+	
 Sat Feb 12 19:47:14 2000  Nicola Pero  <n.pero@mi.flashnet.it>
 
 	* Source/NSPopUpButton.m ([-selectItem:]): Bug fix: Update menu

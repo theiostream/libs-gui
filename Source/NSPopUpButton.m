@@ -351,7 +351,7 @@ Class _nspopupbuttonCellClass = 0;
 
   // Send action to target
   [super sendAction: [self action]
-	 to: [self target]];
+		 to: [self target]];
 }
 
 /*
@@ -359,30 +359,58 @@ Class _nspopupbuttonCellClass = 0;
  */
 - (void) encodeWithCoder: (NSCoder*)aCoder
 {
+  int	i;
+  BOOL	f;
+  id	c;
+
+  /*
+   * Don't encode all the cell information!
+   */
+  c = RETAIN([self cell]);
   [super encodeWithCoder: aCoder];
-/*
-  [aCoder encodeObject: list_items];
-  [aCoder encodeRect: list_rect];
-  [aCoder encodeValueOfObjCType: @encode(int) at: &selected_item];
-  [aCoder encodeConditionalObject: pub_target];
-  [aCoder encodeValueOfObjCType: @encode(SEL) at: &pub_action];
-  [aCoder encodeValueOfObjCType: @encode(BOOL) at: &is_up];
-  [aCoder encodeValueOfObjCType: @encode(BOOL) at: &pulls_down];
-*/
+  [self setCell: c];
+  RELEASE(c);
+  f = [self pullsDown];
+  [aCoder encodeValueOfObjCType: @encode(BOOL) at: &f];
+  [aCoder encodeObject: [self itemArray]];
+  i = [self indexOfSelectedItem];
+  [aCoder encodeValueOfObjCType: @encode(int) at: &i];
 }
 
 - (id) initWithCoder: (NSCoder*)aDecoder
 {
+  NSArray	*dItems;
+  int		dSelected;
+  BOOL		dPull;
+  unsigned	i;
+  id		aCell;
+
   [super initWithCoder: aDecoder];
-/*
-  [aDecoder decodeValueOfObjCType: @encode(id) at: &list_items];
-  list_rect = [aDecoder decodeRect];
-  [aDecoder decodeValueOfObjCType: @encode(int) at: &selected_item];
-  pub_target = [aDecoder decodeObject];
-  [aDecoder decodeValueOfObjCType: @encode(SEL) at: &pub_action];
-  [aDecoder decodeValueOfObjCType: @encode(BOOL) at: &is_up];
-  [aDecoder decodeValueOfObjCType: @encode(BOOL) at: &pulls_down];
-*/
+  /*
+   * Set a newly created cell.
+   */
+  aCell = [[[self class] cellClass] new];
+  [self setCell: aCell];
+  RELEASE(aCell);
+  [aDecoder decodeValueOfObjCType: @encode(BOOL) at: &dPull];
+  [self setPullsDown: dPull];
+  dItems = [aDecoder decodeObject];
+  for (i = 0; i < [dItems count]; i++)
+    {
+      NSMenuItem	*dItem = [dItems objectAtIndex: i];
+      NSMenuItem	*item;
+
+      [self addItemWithTitle: [dItem title]];
+      item = [self itemAtIndex: i];
+      [item setTarget: [dItem target]];
+      [item setAction: [dItem action]];
+      [item setEnabled: [dItem isEnabled]];
+      [item setTag: [dItem tag]];
+      [item setKeyEquivalent: [dItem keyEquivalent]];
+    }
+  [aDecoder decodeValueOfObjCType: @encode(int) at: &dSelected];
+  [self selectItemAtIndex: dSelected];
+  [self synchronizeTitleAndSelectedItem];
   return self;
 }
 
