@@ -1,3 +1,7 @@
+2000-02-15  Adam Fedor  <fedor@gnu.org>
+
+	* configure.in: Fix test for rintf
+
 2000-02-14  Adam Fedor  <fedor@gnu.org>
 
 	* Version: Update version number
