@@ -1,3 +1,10 @@
+1999-09-01  Adam Fedor  <fedor@gnu.org>
+
+	* Source/NSFont.m ([NSFont -initWithCoder:]): Get the real font
+	from the fontname.
+	* Source/NSView.m ([NSFont -initWithCoder:]): Initialize frameMatrix
+	and other matrices. (Fixes suggested by GerritVD@decimax.com).
+		
 Mon Aug 30 15:53:41 1999  Martin Man  <Martin.Man@seznam.cz>
 
         * Headers/AppKit/NSPopUpButton.h: 
