@@ -76,10 +76,19 @@ static NSString	*GSWorkspaceNotification = @"GSWorkspaceNotification";
   if (self != nil)
     {
       remote = RETAIN([NSDistributedNotificationCenter defaultCenter]);
-      [remote addObserver: self
-		 selector: @selector(_handleRemoteNotification:)
-		     name: nil
-		   object: GSWorkspaceNotification];
+      NS_DURING
+        [remote addObserver: self
+		   selector: @selector(_handleRemoteNotification:)
+		       name: nil
+		     object: GSWorkspaceNotification];
+      NS_HANDLER
+        NSUserDefaults *defs = [NSUserDefaults standardUserDefaults];
+        if ([defs boolForKey: @"GSLogWorkspaceTimeout"])
+          NSLog(@"NSWorkspace caught exception %@: %@", 
+	        [localException name], [localException reason]);
+        else
+          [localException raise];
+      NS_ENDHANDLER
     }
   return self;
 }
@@ -101,7 +110,7 @@ static NSString	*GSWorkspaceNotification = @"GSWorkspaceNotification";
   NS_HANDLER
     NSUserDefaults *defs = [NSUserDefaults standardUserDefaults];
     if ([defs boolForKey: @"GSLogWorkspaceTimeout"])
-      NSLog(@"NSWorkspace Caught exception %@: %@", 
+      NSLog(@"NSWorkspace caught exception %@: %@", 
 	    [localException name], [localException reason]);
     else
       [localException raise];
