@@ -357,6 +357,9 @@ static NSImage *_pbc_image[2];
         }
       [_selectedItem setImage: _pbc_image[_pbcFlags.pullsDown]];
     }
+  /* Set the item in the menu */
+  [(NSMenuView *)[_menu menuRepresentation] setHighlightedItemIndex: 
+		   [_menu indexOfItem: _selectedItem]];
 }
 
 - (void) selectItemAtIndex: (int)index
