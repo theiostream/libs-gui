@@ -616,7 +616,14 @@
 
 - (void) drawInteriorWithFrame: (NSRect)cellFrame inView: (NSView*)controlView
 {
-  cellFrame = NSInsetRect (cellFrame, xDist, yDist);
+  cellFrame = NSInsetRect(cellFrame, xDist, yDist);
+
+  // Clear the cell frame
+  if ([self isOpaque])
+    {
+      [[NSColor lightGrayColor] set];
+      NSRectFill(cellFrame);
+    }
 
   switch ([self type])
     {
@@ -631,42 +638,31 @@
     }
 }
 
-- (void) drawWithFrame: (NSRect)cellFrame inView: (NSView *)controlView
+- (void) drawWithFrame: (NSRect)cellFrame inView: (NSView*)controlView
 {
   NSDebugLog (@"NSCell drawWithFrame: inView:");
-
-  // We apply a clipping rectangle so save the graphics state
-  PSgsave ();
 
   // Save last view drawn to
   [self setControlView: controlView];
 
-  // Clear the cell frame
-  if ([self isOpaque])
-    {
-      [[NSColor lightGrayColor] set];
-      NSRectFill(cellFrame);
-    }
+  // do nothing if cell's frame rect is zero
+  if (NSIsEmptyRect(cellFrame))
+    return;
 
   // draw the border if needed
   if ([self isBordered])
     {
       if ([self isBezeled])
         {
-          NSDrawWhiteBezel (cellFrame, cellFrame);
-          cellFrame = NSInsetRect (cellFrame, 2, 2);
+          NSDrawWhiteBezel(cellFrame, cellFrame);
         }
       else
         {
-          NSFrameRect (cellFrame);
-          cellFrame = NSInsetRect (cellFrame, 1, 1);
+          NSFrameRect(cellFrame);
         }
     }
 
-  NSRectClip(cellFrame);
   [self drawInteriorWithFrame: cellFrame inView: controlView];
-
-  PSgrestore ();
 }
 
 - (BOOL) isHighlighted
@@ -676,10 +672,13 @@
 
 - (void) highlight: (BOOL)lit
 	 withFrame: (NSRect)cellFrame
-	    inView: (NSView *)controlView	// FIX ME
+	    inView: (NSView*)controlView
 {
-  cell_highlighted = lit;
-  [self drawWithFrame: cellFrame inView: controlView];
+  if (cell_highlighted != lit)
+    {
+      cell_highlighted = lit;
+      [self drawWithFrame: cellFrame inView: controlView];
+    }
 }
 
 //

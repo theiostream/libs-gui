@@ -1,3 +1,17 @@
+Wed Feb 24  8:56:00 1999  Richard Frith-Macdonald <richard@brainstorm.co.uk>
+
+	Benhur reported oddity in cell drawing code - cells were drawing their
+	backgrounds in the method to draw the frame.  Fixed this by moving
+	background drawing code to the drawInterior methods - also removed
+	a lot of redundant code to workaround bugs in clipping that are now
+	fixed.
+	* Source/NSBrowserCell.m: update drawing code.
+	* Source/NSButtonCell.m: ditto.
+	* Source/NSCell.m: ditto.
+	* Source/NSFormCell.m: ditto.
+	* Source/NSSliderCell.m: ditto.
+	* Source/NSTextFieldCell.m: ditto.
+
 Tue Feb 23 19:30:00 1999  Richard Frith-Macdonald <richard@brainstorm.co.uk>
 
 	Practically every file - I went through all the classes that conform

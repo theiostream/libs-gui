@@ -230,17 +230,6 @@
 }
 
 //
-// Displaying
-//
-- (void)drawWithFrame:(NSRect)cellFrame
-	       inView:(NSView *)controlView
-{
-  // Save last view drawn to
-  control_view = controlView;
-  [super drawWithFrame:cellFrame inView:controlView];
-}
-
-//
 // NSCoding protocol
 //
 - (void) encodeWithCoder: (NSCoder*)aCoder

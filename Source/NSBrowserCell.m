@@ -309,11 +309,6 @@ static NSImage *highlight_image;
     [self _drawImage: image inFrame: image_rect];
 }
 
-- (void) drawWithFrame: (NSRect)cellFrame inView: (NSView *)controlView
-{
-  [self drawInteriorWithFrame: cellFrame inView: controlView];
-}
-
 //
 // Editing Text
 //
