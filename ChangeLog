@@ -1,3 +1,8 @@
+Sun Feb 21 14:43:57 1999  Masatake Yamato  <masata-y@is.aist-nara.ac.jp>
+
+	* Panels/GNUmakefile (before-uninstall): Use -d instead of -e.
+        test command in sh of solaris2.6 doesn't support -e option.
+
 Fri Feb 19 20:00:00 1999  Richard Frith-Macdonald <richard@brainstorm.co.uk>
 
 	* Source/NSClipView.m: coordinate fixes.
