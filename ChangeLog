@@ -1,3 +1,9 @@
+Thu Feb  3 02:20:29 2000  Nicola Pero  <n.pero@mi.flashnet.it>
+
+	* Source/NSButtonCell.m ([-cellSize]): Bug fix: typo would prevent
+	button with both image and text, image above/below text, to size
+	correctly.
+
 Wed Feb  2 06:56:33 2000  Nicola Pero  <n.pero@mi.flashnet.it>
 
 	With a hack the library is now able to pop up popupbuttons in the
