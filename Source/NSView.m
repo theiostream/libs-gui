@@ -372,6 +372,10 @@ GSSetDragTypes(NSView* obj, NSArray *types)
 
 - (void) removeFromSuperviewWithoutNeedingDisplay
 {
+  /* This must be first because it invokes -resignFirstResponder:, 
+     which assumes the view is still in the view hierarchy */
+  if ([_window firstResponder] == self)
+    [_window makeFirstResponder: _window];
   /*
    * We MUST make sure that coordinates are invalidated even if we have
    * no superview - cos they may have been rebuilt since we lost the
@@ -400,6 +404,10 @@ GSSetDragTypes(NSView* obj, NSArray *types)
 
 - (void) removeFromSuperview
 {
+  /* This must be first because it invokes -resignFirstResponder:, 
+     which assumes the view is still in the view hierarchy */
+  if ([_window firstResponder] == self)
+    [_window makeFirstResponder: _window];
   /*
    * We MUST make sure that coordinates are invalidated even if we have
    * no superview - cos they may have been rebuilt since we lost the
