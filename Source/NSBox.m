@@ -70,7 +70,7 @@
   offsets.width = 5;
   offsets.height = 5;
   border_rect = bounds;
-  border_type = NSLineBorder;
+  border_type = NSGrooveBorder;
   title_position = NSAtTop;
   title_rect = NSZeroRect;
   content_view = [NSView new];
