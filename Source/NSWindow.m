@@ -855,10 +855,34 @@ static NSRecursiveLock	*windowsLock;
   is_autodisplay = flag;
 }
 
+- (void) _handleWindowNeedsDisplay: (id)bogus
+{
+    [self displayIfNeeded];
+}
+
 - (void) setViewsNeedDisplay: (BOOL)flag
 {
   needs_display = flag;
-  [NSApp setWindowsNeedUpdate: YES];
+  if (flag)
+    {
+      [NSApp setWindowsNeedUpdate: YES];
+      [[NSRunLoop currentRunLoop]
+             performSelector: @selector(_handleWindowNeedsDisplay:)
+                      target: self
+                    argument: nil
+                       order: 600000 /*NSDisplayWindowRunLoopOrdering in OS*/
+                       modes: [NSArray arrayWithObjects:
+                                       NSDefaultRunLoopMode,
+                                       NSModalPanelRunLoopMode,
+                                       NSEventTrackingRunLoopMode, nil]];
+    }
+  else
+    {
+      [[NSRunLoop currentRunLoop]
+             cancelPerformSelector: @selector(_handleWindowNeedsDisplay:)
+                            target: self
+                          argument: nil];
+    }
 }
 
 - (BOOL) viewsNeedDisplay

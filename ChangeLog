@@ -1,3 +1,15 @@
+1999-08-10  Adam Fedor  <fedor@gnu.org>
+
+	* Source/NSClipView.m (-setBoundsOrigin:): Remove
+	window update.
+	* Source/NSScroller.m (-_floatValueForMousePoint:): 
+	Better position calculations.
+	(-trackScrollButtons:): Various improvements. 
+	* Source/NSWindow.m (-setViewsNeedDisplay:): Rewrite to automatically
+	update in event loop.
+	* Source/NSTextView.m (-drawRect:): Minor fix. (Patches and
+	suggestions from  Benhur Stein <Benhur-de-Oliveira.Stein@imag.fr>). 
+
 Mon Aug  9 13:57:48 1999  Adam Fedor  <fedor@ultra.doc.com>
 
 	* NSGraphicsContext.m (-DPSGetEventMatchingMask:...): Add check

@@ -137,7 +137,6 @@
 
 	  destPoint.x -= dx;
 	  destPoint.y -= dy;
-	  [window update];	// Make sure display is up to date.
 	  [self lockFocus];
 	  NSCopyBits(0, intersection, destPoint);
 	  [self unlockFocus];

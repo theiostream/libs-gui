@@ -930,7 +930,7 @@ container, returning the modified location. */
 
 - (void)drawRect:(NSRect)aRect
 {
-  [textStorage drawRange:[self selectedRange] atPoint:aRect.origin.x];
+  [textStorage drawRange: [self selectedRange] atPoint: aRect.origin];
 }
 
 /*
