@@ -1,3 +1,30 @@
+Mon Jan 31 00:24:17 2000  Nicola Pero  <n.pero@mi.flashnet.it>
+
+	Rewritten, fixed, NSPopUpButton appearance.  NB: When the button
+	popups in the wrong position, that is a bug elsewhere.
+	* Headers/AppKit/NSMenuItemCell.h: Added ivar
+	_mcell_belongs_to_popupbutton.
+	* Source/NSMenuItemCell.m ([-imageRectForBounds:]): In the special
+	case _mcell_belongs_to_popupbutton == YES and there is an image,
+	draw it at the extreme right.
+	* Source/NSPopUpButtonCell.m: Added private method [NSMenuItemCell
+	-setBelongsToPopUpButton:].  ([+initialize]): Added method.  We
+	are now caching the two standard images.  ([-addItemWithTitle:]):
+	Simplified.  ([-insertItemWithTitle:atIndex:]): Set image position
+	to right, and set cell to belong to popup button.
+	([-selectItem:]): Invoke setChangesState: NO and set proper image
+	after setting state of any item. ([-selectItemAtIndex:]): Made
+	code readable.  ([-drawWithFrame:inView:]): Set background of
+	image.
+
+	* Source/NSMenuItemCell.m ([-calcSize]): Bug fix: don't move the
+	image to the left if a valid image position has been already set.
+	* Source/NSMenuView.m ([-setMenuItemCell:forItemAtIndex:]): Bug
+	fix: Connect new cell to menuItem and menu so that it works.
+	* Source/NSApplication.m
+	([-orderFrontStandardAboutPanelWithOptions:]): Display 'Info' in
+	the title.
+
 2000-01-28  Adam Fedor  <fedor@gnu.org>
 
 	* Source/NSBrowser.m ([NSBrowser -_performLoadOfColumn:]): Don't
@@ -34,17 +61,19 @@ Mon Jan 24 23:45:30 2000  Nicola Pero  <n.pero@mi.flashnet.it>
 	-orderFrontStandardInfoPanel: are available; one displays 'About'
 	in the title, and the other displays 'Info'; they are otherwise
 	identical.  GNUstep recommends using the 'Info' version.
-	* Source/GNUmakefile (libgnustep-gui_OBJC_FILES): Added GSInfoPanel.  
-	(libgnustep-gui_HEADER_FILES): Idem.
+	* Source/GNUmakefile (libgnustep-gui_OBJC_FILES): Added
+	GSInfoPanel.  (libgnustep-gui_HEADER_FILES): Idem.
 	* Source/GSInfoPanel.m: New class.
 	* Headers/AppKit/GSInfoPanel.h: New class.
 	* Headers/AppKit/NSApplication.h: Added ivar _infoPanel, declaration 
 	of new methods. 
 	* Source/NSApplication.m
-	([-orderFrontStandardInfoPanelWithOptions:]): New method, implemented.  
-	([-orderFrontStandardInfoPanel:]): Idem.  ([-orderFrontStandardAboutPanel:]): 
-	Idem.  ([-orderFrontStandardAboutPanelWithOptions:]): Idem.  ([-dealloc]): 
-	Added release of _infoPanel.
+	([-orderFrontStandardInfoPanelWithOptions:]): New method,
+	implemented.
+	([-orderFrontStandardInfoPanel:]): Idem.
+	([-orderFrontStandardAboutPanel:]): Idem.
+	([-orderFrontStandardAboutPanelWithOptions:]): Idem.
+	([-dealloc]): Added release of _infoPanel.
 
 Mon Jan 24 04:01:55 2000  Nicola Pero  <n.pero@mi.flashnet.it>
 
