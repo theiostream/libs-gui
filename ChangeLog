@@ -1,3 +1,9 @@
+Mon Jul 22 12:50:34 2002  Nicola Pero  <n.pero@mi.flashnet.it>
+
+	* Source/NSApplication.m (initialize_gnustep_backend): Remove
+	useless instruction in loop looking for the backend.  (Patch by
+	David David Relson <relson@osagesoftware.com>).
+
 2002-07-20  Adam Fedor  <fedor@gnu.org>
 
 	* Source/NSWindow.m (-_initDefaults): Set background
