@@ -140,7 +140,22 @@ NSPoint rotatePoint(NSPoint p, NSPoint centre, float angle);
   	return AUTORELEASE(element);
 }
 
-- (id)copyWithZone:(NSZone*)zone
+- (void)encodeWithCoder:(NSCoder *)aCoder
+{
+	[super encodeWithCoder: aCoder];
+	[aCoder encodeValueOfObjCType: @encode(NSBezierPathElement) at: &type];
+	[aCoder encodeValueOfObjCType: @encode(NSPoint *) at: &p];
+}
+
+- (id)initWithCoder:(NSCoder *)aCoder
+{
+	self = [super initWithCoder: aCoder];
+   [aCoder decodeValueOfObjCType: @encode(NSBezierPathElement) at: &type];
+   [aCoder decodeValueOfObjCType: @encode(NSPoint *) at: &p];
+	return self;
+}
+
+- (id)copyWithZone:(NSZone *)zone
 {
 	PathElement *element = [[PathElement allocWithZone: zone] init];
 	element->type = type;
@@ -156,17 +171,6 @@ NSPoint rotatePoint(NSPoint p, NSPoint centre, float angle);
 		element->p[2].y = p[2].y;
 	}
 	return AUTORELEASE(element);
-}
-
-- (void)encodeWithCoder:(NSCoder*)aCoder
-{
-	[super encodeWithCoder: aCoder];
-}
-
-- (id)initWithCoder:(NSCoder*)aCoder
-{
-	[super initWithCoder: aCoder];
-	return self;
 }
 
 - (void)setType:(NSBezierPathElement)t
@@ -665,21 +669,21 @@ static Class NSBezierPath_concrete_class = nil;
 //
 // NSCoding protocol
 //
-- (void)encodeWithCoder:(NSCoder*)aCoder
+- (void)encodeWithCoder:(NSCoder *)aCoder
 {
-	[super encodeWithCoder: aCoder];
+	[self subclassResponsibility:_cmd];
 }
 
-- (id)initWithCoder:(NSCoder*)aCoder
+- (id)initWithCoder:(NSCoder *)aCoder
 {
-	[super initWithCoder: aCoder];
+	[self subclassResponsibility:_cmd];
 	return self;
 }
 
 //
 // NSCopying Protocol
 //
-- (id)copyWithZone:(NSZone*)zone
+- (id)copyWithZone:(NSZone *)zone
 {
 	[self subclassResponsibility:_cmd];
 	return self;
@@ -1290,9 +1294,65 @@ static Class NSBezierPath_concrete_class = nil;
 }
 
 //
+// NSCoding protocol
+//
+- (void)encodeWithCoder:(NSCoder *)aCoder
+{
+	float f;
+	int i;
+	NSRect r;
+	
+	[aCoder encodeValueOfObjCType: @encode(NSMutableArray) at: &pathElements];
+	[aCoder encodeValueOfObjCType: @encode(NSMutableArray) at: &subPaths];
+	r = [self bounds];
+	[aCoder encodeValueOfObjCType: @encode(NSRect) at: &r];
+	r = [self controlPointBounds];
+	[aCoder encodeValueOfObjCType: @encode(NSRect) at: &r];
+	f = [self lineWidth];
+	[aCoder encodeValueOfObjCType: @encode(float) at: &f];
+	i = [self lineCapStyle];
+	[aCoder encodeValueOfObjCType: @encode(int) at: &i];
+	i = [self lineJoinStyle];
+	[aCoder encodeValueOfObjCType: @encode(int) at: &i];
+	i = [self windingRule];
+	[aCoder encodeValueOfObjCType: @encode(int) at: &i];
+	[aCoder encodeValueOfObjCType: @encode(BOOL) at: &cachesBezierPath];
+	[aCoder encodeValueOfObjCType: @encode(NSImage) at: &cacheimg];
+}
+
+- (id)initWithCoder:(NSCoder *)aCoder
+{
+	float f;
+	int i;
+	NSRect r;
+
+	self = [super init];
+	if(self) {
+		[aCoder decodeValueOfObjCType: @encode(NSMutableArray) at: &pathElements];
+		[aCoder decodeValueOfObjCType: @encode(NSMutableArray) at: &subPaths];
+		[aCoder decodeValueOfObjCType: @encode(NSRect) at: &r];
+		[self setBounds: r];
+		[aCoder decodeValueOfObjCType: @encode(NSRect) at: &r];
+		[self setControlPointBounds: r];		
+		[aCoder decodeValueOfObjCType: @encode(float) at: &f];
+		[self setLineWidth: f];
+		[aCoder decodeValueOfObjCType: @encode(int) at: &i];
+		[self setLineCapStyle: i];
+		[aCoder decodeValueOfObjCType: @encode(int) at: &i];
+		[self setLineJoinStyle: i];
+		[aCoder decodeValueOfObjCType: @encode(int) at: &i];
+		[self setWindingRule: i];
+		[aCoder decodeValueOfObjCType: @encode(BOOL) at: &cachesBezierPath];
+		[aCoder decodeValueOfObjCType: @encode(NSImage) at: &cacheimg];
+		isValid = NO;
+	}
+	return self;
+}
+
+//
 // NSCopying Protocol
 //
-- (id)copyWithZone:(NSZone*)zone
+- (id)copyWithZone:(NSZone *)zone
 {
 	GSBezierPath *path = [[GSBezierPath allocWithZone: zone] init];
 	
