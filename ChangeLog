@@ -1,3 +1,13 @@
+2000-07-31  Fred Kiefer  <FredKiefer@gmx.de>
+
+	* Source/NSBundleAdditions.m
+	Removed super calls in coding for GSNibContainer and GSNibItem 
+	to remove compiler warnings
+	* Source/NSTextFieldCell.m
+	[initTextCell:] switch drawsBackground on.
+	* Source/NSText.m
+	[initWithFrame:] switch drawsBackground on.
+	
 2000-07-31 Richard Frith-Macdonald <rfm@gnu.org>
 
 	* Source/NSColor.m: ([-description]) corrected to remove quotes from
