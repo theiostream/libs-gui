@@ -1640,7 +1640,7 @@ NSAssert([event retainCount] > 0, NSInternalInconsistencyException);
 /* infoPanel, macosx API -- Deprecated */
 - (void) orderFrontStandardAboutPanel: sender
 {
-  [self orderFrontStandardAboutPanel: sender];
+  [self orderFrontStandardInfoPanel: sender];
 }
 
 - (void) orderFrontStandardAboutPanelWithOptions: (NSDictionary *)options
