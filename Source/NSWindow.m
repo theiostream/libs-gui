@@ -680,6 +680,10 @@ static NSMapTable* windowmaps = NULL;
 	{
 	  [self resignKeyWindow];
 	  i = pos + 1;
+	  if (i == c)
+	    {
+	      i = 0;
+	    }
 	  while (i != pos)
 	    {
 	      w = [windowList objectAtIndex: i];
@@ -724,6 +728,10 @@ static NSMapTable* windowmaps = NULL;
 	  else
 	    {
 	      i = pos + 1;
+	      if (i == c)
+		{
+		  i = 0;
+		}
 	      while (i != pos)
 		{
 		  w = [windowList objectAtIndex: i];
