@@ -1,7 +1,18 @@
 ANNOUNCE
 ********
 
-This is version 0.7.8 of the GNUstep GUI library (`gnustep-gui').
+This is version 0.7.9 of the GNUstep GUI library (`gnustep-gui').
+
+This is a prerelease version for 0.8.0. Please test this version as
+much as possible and report bugs to bug-gnustep@gnu.org
+
+from CVS, you can also get it:
+
+cvs -z3 co -r freeze-0_8_0 gui
+
+or from existing source
+
+cvs -z3 update -r freeze-0_8_0
 
 What is the GNUstep GUI Library?
 ================================
@@ -28,17 +39,19 @@ systems.
 GNUstep Base Library, the TIFF Graphics library, and a back-end
 component like the GNUstep 'Back' Backend.
 
-Noteworthy changes in version `0.7.8'
+Noteworthy changes in version `0.7.9'
 =====================================
 
-   * Wheel color picker, standard color picker (bundles) added.
+   * NSTableView, NSOutlineView improvements.
 
-   * System colors now use named colors. Easier configuration
+   * Menus no longer work in modal loop.
+
+   * Skeleton implementation of NSToolBar
 
 Where can you get it?  How can you compile it?
 ==============================================
 
-   The gstep-gui-0.7.8.tar.gz distribution file has been placed on
+   The gstep-gui-0.7.9.tar.gz distribution file has been placed on
 `ftp.gnustep.org' in `pub/gnustep/core'.
 
    the TIFF Graphics library version 3.4 is required.

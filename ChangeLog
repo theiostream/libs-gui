@@ -1,3 +1,9 @@
+2002-07-19  Adam Fedor  <fedor@gnu.org>
+
+	* Source/NSImage.m (-lockFocusOnRepresentation:): Make sure
+	newly created cache image is valid.
+	* Source/NSCursor.m (backgroundColorHint:): Remove extra NSLog.
+
 2002-07-17  Adam Fedor  <fedor@gnu.org>
 
 	* Version: 0.7.9
