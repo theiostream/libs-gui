@@ -1,3 +1,10 @@
+Sat Feb  5 03:02:04 2000  Nicola Pero  <n.pero@mi.flashnet.it>
+
+	* Source/NSWindow.m ([-orderWindow:relativeTo:]): Fixed a quite
+	serious bug appearing twice, in two for loops.  It was messing
+	window ordering, causing the app to freeze under certain
+	circumstances.
+
 Fri Feb  4 18:35:59 2000  Nicola Pero  <n.pero@mi.flashnet.it>
 
 	* Source/GSInfoPanel.m ([-initWithDictionary:]): Use
