@@ -2,6 +2,7 @@
 
 	* Source/NSMenuView.m: fix nagging bug reported by Gregory John
 	Casamento  <gcasamen@my-deja.com>.
+	* Source/NSWorkspace.m: reverted an erroneous patch I applied.
 
 1999-09-04  Nicola Pero  <n.pero@mi.flashnet.it>
 
