@@ -1,3 +1,8 @@
+2000-02-13  Adam Fedor  <fedor@gnu.org>
+
+	* Source/NSAffineTransform (-transformBezierPath:): Implement.
+	(from Enrico Sersale  <enrico@imago.ro>).
+
 Mon Feb 14 00:59:33 2000  Nicola Pero  <n.pero@mi.flashnet.it>
 
 	* Source/NSApplication.m ([-orderFrontStandardAboutPanel:]): Fixed
