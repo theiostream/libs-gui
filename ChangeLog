@@ -1,3 +1,8 @@
+1999-03-04  Adam Fedor  <fedor@gnu.org>
+
+	* Testing/GNUmakefile.preamble: Remove tiff and jpeg libs.
+	* Tools/GNUmakefile.preamble: Likewise (already in make package).
+
 1999-03-01  Adam Fedor  <fedor@gnu.org>
 
 	* Update documentation.
