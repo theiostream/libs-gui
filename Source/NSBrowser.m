@@ -955,6 +955,7 @@
 
   // load column 0
   [self _performLoadOfColumn: 0];
+  [self _adjustMatrixOfColumn: 0];
 
   _isLoaded = YES;
 
@@ -988,6 +989,7 @@
 
   // Perform the data load
   [self _performLoadOfColumn: column];
+  [self _adjustMatrixOfColumn: column];
 
   // set last column loaded
   [self setLastColumn: column];
