@@ -1,3 +1,8 @@
+Wed Feb 09 18:59:02 2000  Enrico Sersale  <enrico@imago.ro>
+
+	* Source/NSBezierPath.m  Headers/gnustep/gui/NSBezierPath.h :
+	Rewritten conforming to MacOS-X implementation details.
+
 Tue Feb  8 17:22:05 2000  Nicola Pero  <n.pero@mi.flashnet.it>
 
 	* Model/GMAppKit.m ([NSMenuItem -initWithModelUnarchiver:]): Fix
