@@ -1,3 +1,8 @@
+Sat Feb 12 21:16:00 2000  Nicola Pero  <n.pero@mi.flashnet.it>
+
+	* Source/NSBrowser.m ([-loadColumnZero]), ([-reloadColumn:]):
+	Adjust frame of column after loading it.
+
 Sat Feb 12 20:27:00 2000  Richard Frith-Macdonald <richard@brainstorm.co.uk>
 
 	* Source/NSView.m: ([setNeedsDisplayInRect:]) change to ensure that
