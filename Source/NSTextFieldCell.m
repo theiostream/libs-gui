@@ -92,8 +92,8 @@ static NSColor	*txtCol;
 
   ASSIGN(_text_color, txtCol);
   ASSIGN(_background_color, bgCol);
-  _textfieldcell_draws_background = NO;
-  _textfieldcell_is_opaque = NO;
+  _textfieldcell_draws_background = YES;
+  _textfieldcell_is_opaque = YES;
   return self;
 }
 
