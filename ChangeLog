@@ -1,3 +1,8 @@
+Fri Aug  6 15:07:29 1999  Adam Fedor  <fedor@ultra.doc.com>
+
+	* Headers/gnustep/gui/NSDragging: Corrected method name.
+	* Source/NSWindow.m: Likewise.
+
 1999-08-03  Michael Hanni  <mhanni@sprintmail.com>
 
 	* Source/NSMenu.m: commented out code which did multiple menu

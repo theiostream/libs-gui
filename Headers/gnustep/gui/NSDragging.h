@@ -51,7 +51,7 @@ typedef enum _NSDragOperation {
 //
 - (NSWindow *)draggingDestinationWindow;
 - (NSPoint)draggingLocation;
-- (NSPasteboard *)draggingPasteBoard;
+- (NSPasteboard *)draggingPasteboard;
 - (int)draggingSequenceNumber;
 - (id)draggingSource;
 - (NSDragOperation)draggingSourceOperationMask;

@@ -374,7 +374,7 @@
              ofCell:(NSCell *)cell
 {}
 
-- (BOOL)readSelectionFromPasteboard:(NSPasteBoard *)pboard
+- (BOOL)readSelectionFromPasteboard:(NSPasteboard *)pboard
 {
   return NO;
 }

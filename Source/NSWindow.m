@@ -2148,7 +2148,7 @@ static NSRecursiveLock	*windowsLock;
 
 BOOL GSViewAcceptsDrag(NSView *v, id<NSDraggingInfo> dragInfo)
 {
-  NSPasteboard *pb = [dragInfo draggingPasteBoard];
+  NSPasteboard *pb = [dragInfo draggingPasteboard];
   if ([pb availableTypeFromArray: GSGetDragTypes(v)])
     return YES;
   return NO;
