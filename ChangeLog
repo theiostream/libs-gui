@@ -1,3 +1,8 @@
+2001-07-03  Adam Fedor  <fedor@gnu.org>
+
+	* Version: 0.7.0
+	* Documentation/*: Update.
+
 2001-06-26  Adam Fedor  <fedor@gnu.org>
 
 	* Source/NSMatrix.m (-updateCell:): Revert last change.
