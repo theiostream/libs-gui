@@ -1,3 +1,15 @@
+Sun Feb 13 22:24:54 2000  Nicola Pero  <n.pero@mi.flashnet.it>
+
+	This fixes a bug; the same bug that produced those little white
+	vertical lines at the bottom of windows with editable textfields
+	when windows were ordered out then in after editing.
+	* Source/NSView.m ([-removeFromSuperviewWithoutNeedingDisplay]),
+	([-removeFromSuperview]): Ask the window to take first responder
+	status in our place if we are.  Important: this is done *before*
+	any other action is undertaken, because changing first responder
+	invokes -resignFirstResponder:, which should be allowed to assume
+	that the view is normally placed in the view hierarchy.
+
 Sun Feb 13 19:20:00 2000  Enrico Sersale  <enrico@imago.ro>
 
 	* Source/NSBezierPath.m: ([-copyWithZone:]) implemented.
