@@ -1,3 +1,13 @@
+Tue Feb  8 17:22:05 2000  Nicola Pero  <n.pero@mi.flashnet.it>
+
+	* Model/GMAppKit.m ([NSMenuItem -initWithModelUnarchiver:]): Fix
+	for having GNUstep load gmodels created from OPENSTEP NIBs.
+	NSMenu internals are slightly different in GNUstep and OPENSTEP;
+	OPENSTEP stores an item submenu as the item target, while GNUstep
+	stores it in a special mi_submenu ivar.  This patch, for GNUstep
+	only, sets the submenu ivar from the target for items which have a
+	submenu.
+
 2000-02-07  Adam Fedor  <fedor@gnu.org>
 
 	* configure.in: Add check for rintf.
