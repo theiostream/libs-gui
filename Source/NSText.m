@@ -2366,6 +2366,7 @@ scanRange(NSScanner *scanner, NSCharacterSet* aSet)
 {
   unsigned cursorIndex;
   NSPoint cursorPoint;
+  NSRange newRange;
 
   if (_tf.is_field_editor)
     {
@@ -2387,15 +2388,17 @@ scanRange(NSScanner *scanner, NSCharacterSet* aSet)
   cursorIndex = [self characterIndexForPoint:
 			NSMakePoint (_currentCursor.x + 0.001,
 				     MAX (0, cursorPoint.y - 0.001))];
-  [self setSelectedRange: [self selectionRangeForProposedRange:
-				  NSMakeRange (cursorIndex, 0)
-				granularity: NSSelectByCharacter]];
+
+  newRange.location = cursorIndex;
+  newRange.length = 0;
+  [self setSelectedRange: newRange];
 }
 
 - (void) moveDown: (id) sender
 {
   unsigned cursorIndex;
   NSRect cursorRect;
+  NSRange newRange;
 
   if (_tf.is_field_editor)
     {
@@ -2407,7 +2410,7 @@ scanRange(NSScanner *scanner, NSCharacterSet* aSet)
   if (_selected_range.location == [self textLength])
     return;
 
-  if (_selected_range.length)
+  if (_selected_range.length != 0)
     {
       _currentCursor = [self rectForCharacterIndex:
 			       NSMaxRange (_selected_range)].origin;
@@ -2417,36 +2420,43 @@ scanRange(NSScanner *scanner, NSCharacterSet* aSet)
   cursorIndex = [self characterIndexForPoint:
 			NSMakePoint (_currentCursor.x + 0.001,
 				     NSMaxY (cursorRect) + 0.001)];
-  [self setSelectedRange: [self selectionRangeForProposedRange:
-				  NSMakeRange (cursorIndex, 0)
-				granularity: NSSelectByCharacter]];
+
+  newRange.location = cursorIndex;
+  newRange.length = 0;
+  [self setSelectedRange: newRange];
 }
 
 - (void) moveLeft: (id) sender
 {
+  NSRange newSelectedRange;
+
   /* Do nothing if we are at beginning of text */
   if (_selected_range.location == 0)
     return;
 
-  [self setSelectedRange:
-	  [self selectionRangeForProposedRange:
-		  NSMakeRange (_selected_range.location - 1, 0)
-		granularity: NSSelectByCharacter]];
+  newSelectedRange.location = _selected_range.location - 1;
+  newSelectedRange.length = 0;
+
+  [self setSelectedRange: newSelectedRange];
+
   _currentCursor.x = [self rectForCharacterIndex:
 			   _selected_range.location].origin.x;
 }
 
 - (void) moveRight: (id) sender
 {
+  NSRange newSelectedRange;
+  unsigned int length = [self textLength];
+
   /* Do nothing if we are at end of text */
-  if (_selected_range.location == [self textLength])
+  if (_selected_range.location == length)
     return;
 
-  [self setSelectedRange:
-	  [self selectionRangeForProposedRange:
-		  NSMakeRange (MIN (NSMaxRange (_selected_range) + 1,
-				    [self textLength]), 0)
-		granularity: NSSelectByCharacter]];
+  newSelectedRange.location = MIN (NSMaxRange (_selected_range) + 1, length);
+  newSelectedRange.length = 0;
+
+  [self setSelectedRange: newSelectedRange];
+
   _currentCursor.x = [self rectForCharacterIndex:
 			   _selected_range.location].origin.x;
 }
@@ -2835,7 +2845,7 @@ scanRange(NSScanner *scanner, NSCharacterSet* aSet)
 {
   unsigned index;
   NSRange aRange;
-  NSRange newRange = proposedCharRange;
+  NSRange newRange;
   NSString *string = [self string];
   unsigned length = [string length];
 
@@ -2845,36 +2855,77 @@ scanRange(NSScanner *scanner, NSCharacterSet* aSet)
       proposedCharRange.length = 0;
       return proposedCharRange;
     }
-  if (proposedCharRange.length > length - proposedCharRange.location)
+
+  if (NSMaxRange (proposedCharRange) > length)
     {
       proposedCharRange.length = length - proposedCharRange.location;
     }
 
-  if (!length)
+  if (length == 0)
+    {
       return proposedCharRange;
+    }
 
   switch (granularity)
     {
     case NSSelectByWord:
-      index = [_textStorage nextWordFromIndex: proposedCharRange.location
-				   forward: NO];
+      /* FIXME: The following code (or the routines it calls) does the
+	 wrong thing when you double-click on the space between two
+	 words */
+      if ((proposedCharRange.location + 1) < length)
+	{
+	  index = [_textStorage nextWordFromIndex: 
+				  (proposedCharRange.location + 1)
+				forward: NO];
+	}
+      else
+	{
+	  /* Exception: end of text */
+	  index = [_textStorage nextWordFromIndex: proposedCharRange.location
+				forward: NO];
+	}
       newRange.location = index;
-      index = [_textStorage nextWordFromIndex: NSMaxRange(proposedCharRange)
-				   forward: YES];
-      if (index > newRange.location)
-	newRange.length = index - 1 - newRange.location;
+      index = [_textStorage nextWordFromIndex: NSMaxRange (proposedCharRange)
+                                      forward: YES];
+      if (index <= newRange.location)
+	{
+	  newRange.length = 0;
+	}
+      else
+	{
+	  if (index == length)
+	    {
+	      /* We are at the end of text ! */
+	      newRange.length = index - newRange.location;
+	    }
+	  else 
+	    {
+	      /* FIXME: The following will not work if there is more than a 
+		 single character between the two words ! */
+	      newRange.length = index - 1 - newRange.location;
+	    }
+	}
       return newRange;
+
     case NSSelectByParagraph:
-      return [[self string] lineRangeForRange: proposedCharRange];
+      return [string lineRangeForRange: proposedCharRange];
 
     case NSSelectByCharacter:
     default:
-      aRange = [string rangeOfComposedCharacterSequenceAtIndex: proposedCharRange.location];
-      newRange.location = aRange.location;
-      // If the proposedCharRange is empty we only ajust the beginning
-      if (!proposedCharRange.length)
-	return newRange;
-      aRange = [string rangeOfComposedCharacterSequenceAtIndex: NSMaxRange(proposedCharRange)];
+      if (proposedCharRange.length == 0)
+	return proposedCharRange;
+
+      /* Expand the beginning character */
+      index = proposedCharRange.location;
+      newRange = [string rangeOfComposedCharacterSequenceAtIndex: index];
+      /* If the proposedCharRange is empty we only ajust the beginning */
+      if (proposedCharRange.length == 0)
+	{
+	  return newRange;
+	}
+      /* Expand the finishing character */
+      index = NSMaxRange (proposedCharRange) - 1;
+      aRange = [string rangeOfComposedCharacterSequenceAtIndex: index];
       newRange.length = NSMaxRange(aRange) - newRange.location;
       return newRange;
     }
