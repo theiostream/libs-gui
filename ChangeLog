@@ -1,3 +1,7 @@
+2000-02-16  Adam Fedor  <fedor@gnu.org>
+
+	* gnustep-gui.spec: Newfile
+
 2000-02-15  Adam Fedor  <fedor@gnu.org>
 
 	* configure.in: Fix test for rintf
