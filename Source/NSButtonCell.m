@@ -382,6 +382,8 @@
   if (showAlternate || [self isHighlighted])
     {
       imageToDisplay = [self alternateImage];
+      if (!imageToDisplay)
+	imageToDisplay = [self image];
       titleToDisplay = [self alternateTitle];
       if (!titleToDisplay)
         titleToDisplay = [self title];
