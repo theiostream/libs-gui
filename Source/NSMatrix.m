@@ -1790,6 +1790,15 @@ static SEL getSel = @selector(objectAtIndex:);
   static MPoint anchor = {0, 0};
   int clickCount;
 
+  /*
+   * Pathological case -- ignore mouse down
+   */
+  if ((numRows == 0) || (numCols == 0))
+    {
+      [super mouseDown: theEvent];
+      return; 
+    }
+
   // Manage multi-click events
   clickCount = [theEvent clickCount];
 
