@@ -1,3 +1,7 @@
+1999-03-08  Adam Fedor  <fedor@gnu.org>
+
+	* Version 0.5.5 Released.
+
 Sun Mar  7  5:58:00 1999  Richard Frith-Macdonald <richard@brainstorm.co.uk>
 
 	* Source/NSView.m: Fixed error invalidating coordinates of a view.
