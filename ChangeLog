@@ -1,3 +1,7 @@
+2001-06-18  Adam Fedor  <fedor@gnu.org>
+
+	* Source/NSMatrix.m (-updateCell:): Call abortEditing.
+
 2000-06-16  Fred Kiefer <FredKiefer@gmx.de>
 
 	* Source/NSImage.m

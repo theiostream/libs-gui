@@ -2287,6 +2287,8 @@ static SEL getSel;
   if ([self getRow: &row column: &col ofCell: aCell] == NO)
     return;	// Not a cell in this matrix - we can't update it.
 
+  [self abortEditing];
+
   rect = [self cellFrameAtRow: row column: col];
   [self setNeedsDisplayInRect: rect];
 }
