@@ -70,7 +70,6 @@ static Class imageClass;
 - (id) init
 {
   self = [super init];
-  mi_hasSubmenu = NO;
   mi_target = nil;
   mi_menu = nil;
   mi_mnemonicLocation = 255; // No mnemonic
