@@ -1,3 +1,10 @@
+2000-08-2  Fred Kiefer  <FredKiefer@gmx.de>
+
+	* Source/NSText.m
+	Changed the handling of the selection. The selection now only gets
+	drawn inside of drawRect: otherwise it is just flaged as needing a
+	redraw. 
+
 2000-08-01  Adam Fedor  <fedor@gnu.org>
 
 	* Source/NSWindow.m (-mouseDown:): Use NSWindow's -deminiaturize.
