@@ -1,3 +1,13 @@
+Tue Jul 30 11:07:45 2002  Nicola Pero  <n.pero@mi.flashnet.it>
+
+	Patch by David Ayers (<d.ayers@inode.at>), modified:
+	* Source/NSTextView.m ([-_syncTextViewsByCalling:withFlag:]):
+	Compute the imp for each different textview, not just once for
+	all, so that we should be able to manage the case where they are
+	of different NSTextView subclasses.
+	(NSTEXTVIEW_SYNC): Removed the argument; just use _cmd as the
+	selector; updated all users.
+
 2002-07-26  Adam Fedor  <fedor@gnu.org>
 
 	* Source/NSStringDrawing.m (setupSpecialRun): Set run width
