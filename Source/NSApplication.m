@@ -475,15 +475,17 @@ static NSCell* tileCell = nil;
     }
 }
 
-+ (void)detachDrawingThread:(SEL)selector toTarget:(id)target withObject:(id)argument
++ (void) detachDrawingThread: (SEL)selector
+		    toTarget: (id)target
+		  withObject: (id)argument
 {
-    // TODO: This is not fully defined by Apple
+  /* TODO: This is not fully defined by Apple.  */
 }
 
 + (NSApplication *) sharedApplication
 {
   /* If the global application does not yet exist then create it */
-  if (!NSApp)
+  if (NSApp == nil)
     {
       /*
        * Don't combine the following two statements into one to avoid
@@ -509,7 +511,7 @@ static NSCell* tileCell = nil;
       return [NSApplication sharedApplication];
     }
   
-  // Initialization must be enclosed in an autorelease pool
+  /* Initialization must be enclosed in an autorelease pool.  */
   {
     CREATE_AUTORELEASE_POOL (_app_init_pool);
 
@@ -525,41 +527,42 @@ static NSCell* tileCell = nil;
     
     NSDebugLog(@"Begin of NSApplication -init\n");
 
-    /* Initialize the backend here. */
+    /* Initialize the backend here.  */
     initialize_gnustep_backend();
 
-    /* Connect to our window server */
+    /* Connect to our window server.  */
     srv = [GSDisplayServer serverWithAttributes: nil];
     RETAIN(srv);
     [GSDisplayServer setCurrentServer: srv];
 
-    /* Create a default context. */
+    /* Create a default context.  */
     _default_context = [NSGraphicsContext graphicsContextWithAttributes: nil];
     RETAIN(_default_context);
     [NSGraphicsContext setCurrentContext: _default_context];
 
-    /* Initialize font manager */
+    /* Initialize font manager.  */
     [NSFontManager sharedFontManager];
 
     _hidden = [[NSMutableArray alloc] init];
     _inactive = [[NSMutableArray alloc] init];
     _unhide_on_activation = YES;
     _app_is_hidden = YES;
-    /* Ivar already automatically initialized to NO when the app is created */
+    /* Ivar already automatically initialized to NO when the app is
+       created.  */
     //_app_is_active = NO;
     //_main_menu = nil;
     _windows_need_update = YES;
 
-    /* Set a new exception handler for the gui library */
+    /* Set a new exception handler for the gui library.  */
     NSSetUncaughtExceptionHandler (_NSAppKitUncaughtExceptionHandler);
       
     _listener = [GSServicesManager newWithApplication: self];
     
-    /* NSEvent doesn't use -init so we use +alloc instead of +new */
+    /* NSEvent doesn't use -init so we use +alloc instead of +new.  */
     _current_event = [NSEvent alloc]; // no current event
     null_event = [NSEvent alloc];    // create dummy event
     
-    /* We are the end of responder chain	*/
+    /* We are the end of responder chain.  */
     [self setNextResponder: nil];
     
     RELEASE (_app_init_pool);
