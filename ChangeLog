@@ -1,3 +1,8 @@
+2000-07-14  Adam Fedor  <fedor@gnu.org>
+
+	* Source/NSApplication.m (-run): Do appIconInit
+	here so NSApp can be set-up without initializing backend.
+
 2000-07-06 Richard Frith-Macdonald <rfm@gnu.org>
 
 	* Source/GNUmakefile: Install GSFontInfo.h

@@ -523,7 +523,6 @@ static NSCell* tileCell = nil;
 
   _hidden = [NSMutableArray new];
   _inactive = [NSMutableArray new];
-  [self _appIconInit];
   unhide_on_activation = YES;
   app_is_hidden = YES;
   app_is_active = NO;
@@ -853,6 +852,7 @@ static NSCell* tileCell = nil;
    */
   app_should_quit = NO;
 
+  [self _appIconInit];
   [self finishLaunching];
 
   app_is_running = YES;
