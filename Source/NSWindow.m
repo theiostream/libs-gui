@@ -237,9 +237,7 @@ static NSCell* tileCell = nil;
   if ([theEvent clickCount] >= 2)
     {
       NSWindow	*w = [_window counterpart];
-
-      [_window orderOut: self];
-      [w orderFront: self];
+      [w deminiaturize: self];
     }
   else
     {
