@@ -1,3 +1,13 @@
+Mon Feb  7 03:06:36 2000  Nicola Pero  <n.pero@mi.flashnet.it>
+
+	This bug was crashing GNUstep while I was doing experiments with
+	the Save Panel's code.  It wasn't easy to find.
+	* Source/NSMatrix.m ([-putCell:atRow:column:]): Fixed bug.  If we
+	are putting a new cell precisely in _selectedRow, _selectedColumn,
+	we have to update _selectedCell, otherwise it remains pointing to
+	the released cell!  ([-insertRow:withCells:]),
+	([-insertColumn:withCells:]): Idem.
+	
 Sun Feb  6  8:52:00 2000  Richard Frith-Macdonald <richard@brainstorm.co.uk>
 
 	* Source/GSInfoPanel.m: Make newly created panel appear in center
