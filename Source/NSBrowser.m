@@ -2592,7 +2592,6 @@
 	  [matrix setDoubleAction: @selector(doDoubleClick:)];
 
 	  // set new col matrix and release old
-	  [[bc columnMatrix] release];
 	  [bc setColumnMatrix: matrix];
 	  [sc setDocumentView: matrix];
 
