@@ -1,3 +1,16 @@
+2001-06-14  Mirko Viviani  <mirko.viviani@rccr.cremona.it>
+
+	* Source/NSWindow.m ([NSWindow -setDefaultButtonCell:]): set button
+	key equivalent to '\r'.
+
+	* Source/NSBrowser.m ([NSBrowser -initWithFrame:]): removed debug.
+
+	Patches from Pierre-Yves Rivaille <pyrivail@ens-lyon.fr>
+	* Source/NSPanel.m ([GSAlertPanel -initWithContentRect:styleMask:
+	backing:defer:screen:]): set key view chain.
+	* Source/NSCell.m ([NSCell -performClick:]): set next cell state.
+	* Source/NSBrowser.m ([NSBrowser -keyDown:]): fixed tab selection.
+
 Wed Jun 13 02:36:44 2001  Nicola Pero  <n.pero@mi.flashnet.it>
 
 	* Source/NSBitmapImageRep.m ([+imageRepsWithData:]): Replaced
