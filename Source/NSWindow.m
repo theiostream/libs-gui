@@ -679,17 +679,20 @@ static NSMapTable* windowmaps = NULL;
       if ([self isKeyWindow])
 	{
 	  [self resignKeyWindow];
-	  for (i = pos + 1; i != pos; i++)
+	  i = pos + 1;
+	  while (i != pos)
 	    {
-	      if (i == c)
-		{
-		  i = 0;
-		}
 	      w = [windowList objectAtIndex: i];
 	      if ([w isVisible] && [w canBecomeKeyWindow])
 		{
 		  [w makeKeyWindow];
 		  break;
+		}
+
+	      i++;
+	      if (i == c)
+		{
+		  i = 0;
 		}
 	    }
 	  /*
@@ -720,18 +723,21 @@ static NSMapTable* windowmaps = NULL;
 	    }
 	  else
 	    {
-	      for (i = pos + 1; i != pos; i++)
+	      i = pos + 1;
+	      while (i != pos)
 		{
-		  if (i == c)
-		    {
-		      i = 0;
-		    }
 		  w = [windowList objectAtIndex: i];
 		  if ([w isVisible] && [w canBecomeMainWindow])
 		    {
 		      [w makeMainWindow];
 		      break;
 		    }
+		
+		  i++;
+		  if (i == c)
+		    {
+		      i = 0;
+		    }		  
 		}
 	    }
 	}
