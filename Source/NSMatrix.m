@@ -980,7 +980,8 @@ static SEL getSel;
 	  _dottedColumn = column;
 
 	  if (lastRow != -1 && lastColumn != -1
-	      && (lastRow != row || lastColumn != column))
+	      && (lastRow != row || lastColumn != column) 
+	      && [self window] != nil)
 	    [self drawCellAtRow: lastRow column: lastColumn];
 	}
 
