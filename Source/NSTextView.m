@@ -987,9 +987,14 @@ container, returning the modified location. */
 
   [self display];
   [_window update]; 
-  [self textDidChange: nil];      // broadcast notification
 
   NSLog(@"%@", [textStorage string]);
+  /*
+   * broadcast notification
+   */
+  [[NSNotificationCenter defaultCenter]
+    postNotificationName: NSTextDidChangeNotification
+    object: self];
 }
 
 - (void) sizeToFit
@@ -999,20 +1004,19 @@ container, returning the modified location. */
 
 - (void) drawRect: (NSRect)aRect
 {
+  NSRange	glyphRange;
+
   if (tv_backGroundColor)
     {
       [tv_backGroundColor set];
-      NSRectFill (aRect);
+      NSRectFill(aRect);
     }
-
-  [layoutManager drawGlyphsForGlyphRange: [layoutManager glyphRangeForTextContainer: textContainer]
-	atPoint: [self frame].origin];
+  glyphRange = [layoutManager glyphRangeForTextContainer: textContainer];
+  if (glyphRange.length > 0)
+    {
+      [layoutManager drawGlyphsForGlyphRange: glyphRange
+				     atPoint: [self frame].origin];
+    }
 }
 
-/*
-- (void) mouseDown: (NSEvent*)aEvent
-{
-  NSLog(@"mouseDown:");
-}
-*/
 @end

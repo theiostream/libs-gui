@@ -29,6 +29,24 @@
 */
 #include <AppKit/NSLayoutManager.h>
 
+/*
+ * A little utility function to determine the range of characters in a scanner
+ * that are present in a specified character set.
+ */
+static inline NSRange
+scanRange(NSScanner *scanner, NSCharacterSet* aSet)
+{
+  unsigned	start = [scanner scanLocation];
+  unsigned	end = start;
+
+  if ([scanner scanCharactersFromSet: aSet intoString: 0] == YES)
+    {
+      end = [scanner scanLocation];
+    }
+  return NSMakeRange(start, end - start);
+}
+
+
 // _GSRunSearchKey is an internal class which serves as the foundation for
 // all our searching. This may not be an elegant way to go about this, so
 // if someone wants to optimize this out, please do.
@@ -1009,28 +1027,6 @@ aLine->lineFragmentRect.size.height);
 contain for the most part is. Therefore, my country and a handsome gift of
 Ghiradelli chocolate to he who puts all the pieces together : ) */
 
-@interface _GNUTextScanner: NSObject
-{
-  NSString		*string;
-  NSCharacterSet	*set;
-  NSCharacterSet	*iSet;
-  unsigned		stringLength;
-  NSRange		activeRange;
-}
-+ (_GNUTextScanner*) scannerWithString: (NSString*)aStr
-				   set: (NSCharacterSet*)aSet
-			   invertedSet: (NSCharacterSet*)anInvSet;
-- (void) setString: (NSString*)aString
-	       set: (NSCharacterSet*)aSet
-       invertedSet: (NSCharacterSet*)anInvSet;
-- (NSRange) _scanCharactersInverted: (BOOL)inverted;
-- (NSRange) scanSetCharacters;
-- (NSRange) scanNonSetCharacters;
-- (BOOL) isAtEnd;
-- (unsigned) scanLocation;
-- (void) setScanLocation: (unsigned)aLoc;
-@end
-
 @implementation NSLayoutManager (Private)
 - (int) _rebuildLayoutForTextContainer: (NSTextContainer*)aContainer
 		  startingAtGlyphIndex: (int)glyphIndex
@@ -1040,8 +1036,8 @@ Ghiradelli chocolate to he who puts all the pieces together : ) */
   NSMutableArray *lineStarts = [NSMutableArray new];
   NSMutableArray *lineEnds = [NSMutableArray new];
   int indexToAdd;
-  _GNUTextScanner *lineScanner;
-  _GNUTextScanner *paragraphScanner;
+  NSScanner		*lineScanner;
+  NSScanner		*paragraphScanner;
   BOOL lastLineForContainerReached = NO;
   NSString *aString;
   int previousScanLocation;
@@ -1084,10 +1080,8 @@ Ghiradelli chocolate to he who puts all the pieces together : ) */
 
   startIndex = glyphIndex;
 
-//  lineScanner = [NSScanner scannerWithString: [_textStorage string]];
-
-  paragraphScanner = [_GNUTextScanner scannerWithString: [_textStorage string] 
-			set: selectionParagraphGranularitySet invertedSet: invSelectionParagraphGranularitySet];
+  paragraphScanner = [NSScanner scannerWithString: [_textStorage string]];
+  [paragraphScanner setCharactersToBeSkipped: nil];
 
   [paragraphScanner setScanLocation: startIndex];
 
@@ -1095,19 +1089,23 @@ Ghiradelli chocolate to he who puts all the pieces together : ) */
 
 //  NSLog(@"buffer: %@", [_textStorage string]);
 
-  // This scanner eats one word at a time, we should have it imbeded in
-  // another scanner that snacks on paragraphs (i.e. lines that end with
-  // \n). Look in NSText.
-
+  /*
+   * This scanner eats one word at a time, we should have it imbeded in
+   * another scanner that snacks on paragraphs (i.e. lines that end with
+   * \n). Look in NSText.
+   */
   while (![paragraphScanner isAtEnd])
     {
       previousParagraphLocation = [paragraphScanner scanLocation];
       beginLineIndex = previousParagraphLocation;
       lineWidth = 0.0;
 
-      leadingNlRange=[paragraphScanner scanSetCharacters];
-      paragraphRange = [paragraphScanner scanNonSetCharacters];
-      trailingNlRange=[paragraphScanner scanSetCharacters];
+      leadingNlRange
+	= scanRange(paragraphScanner, selectionParagraphGranularitySet);
+      paragraphRange
+	= scanRange(paragraphScanner, invSelectionParagraphGranularitySet);
+      trailingNlRange
+	= scanRange(paragraphScanner, selectionParagraphGranularitySet);
 
 //      NSLog(@"leadingNlRange: (%d, %d)", leadingNlRange.location, leadingNlRange.length);
 
@@ -1118,22 +1116,26 @@ Ghiradelli chocolate to he who puts all the pieces together : ) */
 
       NSLog(@"paragraphRange: (%d, %d)", paragraphRange.location, paragraphRange.length);
 
-      lineScanner = [_GNUTextScanner scannerWithString: [[_textStorage string] substringWithRange: paragraphRange]
-		      set: selectionWordGranularitySet invertedSet: invSelectionWordGranularitySet];
+      lineScanner = [NSScanner scannerWithString:
+	[[_textStorage string] substringWithRange: paragraphRange]];
+      [lineScanner setCharactersToBeSkipped: nil];
 
-      while(![lineScanner isAtEnd])
+      while (![lineScanner isAtEnd])
         {
           previousScanLocation = [lineScanner scanLocation];
 
            // snack next word
-          leadingSpacesRange = [lineScanner scanSetCharacters];    // leading spaces: only first time
-          currentStringRange = [lineScanner scanNonSetCharacters];
-          trailingSpacesRange= [lineScanner scanSetCharacters];
+          leadingSpacesRange
+	    = scanRange(lineScanner, selectionWordGranularitySet);
+          currentStringRange
+	    = scanRange(lineScanner, invSelectionWordGranularitySet);
+          trailingSpacesRange
+	    = scanRange(lineScanner, selectionWordGranularitySet);
 
           if (leadingSpacesRange.length)
-	    currentStringRange = NSUnionRange (leadingSpacesRange,currentStringRange);
+	    currentStringRange = NSUnionRange(leadingSpacesRange,currentStringRange);
           if (trailingSpacesRange.length)
-	    currentStringRange = NSUnionRange (trailingSpacesRange,currentStringRange);
+	    currentStringRange = NSUnionRange(trailingSpacesRange,currentStringRange);
 
 	  lSize = [_textStorage sizeRange: currentStringRange];
 
@@ -1205,7 +1207,7 @@ numberWithInt: beginLineIndex]];
 
   // step 2. break the lines up and assign rects to them.
 
-  for (i=0;i<[lineStarts count];i++)
+  for (i=0; i < [lineStarts count]; i++)
     {
       NSRect aRect, bRect;
       float padding = [aContainer lineFragmentPadding];

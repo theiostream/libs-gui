@@ -68,6 +68,23 @@
 
 #define HUGE 1e99
 
+/*
+ * A little utility function to determine the range of characters in a scanner
+ * that are present in a specified character set.
+ */
+static inline NSRange
+scanRange(NSScanner *scanner, NSCharacterSet* aSet)
+{
+  unsigned	start = [scanner scanLocation];
+  unsigned	end = start;
+
+  if ([scanner scanCharactersFromSet: aSet intoString: 0] == YES)
+    {
+      end = [scanner scanLocation];
+    }
+  return NSMakeRange(start, end - start);
+}
+
 enum {
   NSBackspaceKey      = 8,
   NSCarriageReturnKey = 13,
@@ -232,118 +249,6 @@ static NSRange MakeRangeFromAbs(int a1,int a2)
 }
 */
 // end: _GNULineLayoutInfo------------------------------------------------------------------------------------------
-
-// NeXT's NSScanner's scanCharactersFromSet and friends seem to be 
-// a bit sluggish on whitespaces and newlines
-// (have not tried GNUstep - base implementation though). 
-// so here is a more pedantic (and faster) implementation: 
-
-// this class should be considered private since it is not polished at all!
-
-
-@interface _GNUTextScanner: NSObject
-{
-  NSString *string;
-  NSCharacterSet *set,*iSet;
-  unsigned stringLength;
-  NSRange activeRange;
-}
-+ (_GNUTextScanner*) scannerWithString: (NSString*) aStr 
-				   set: (NSCharacterSet*) aSet 
-			   invertedSet: (NSCharacterSet*) anInvSet;
-- (void) setString: (NSString*) aString set: (NSCharacterSet*) 
-     aSet invertedSet: (NSCharacterSet*) anInvSet;
-- (NSRange) _scanCharactersInverted: (BOOL) inverted;
-- (NSRange) scanSetCharacters;
-- (NSRange) scanNonSetCharacters;
-- (BOOL) isAtEnd;
-- (unsigned) scanLocation;
-- (void) setScanLocation: (unsigned) aLoc;
-@end
-
-@implementation _GNUTextScanner
-+ (_GNUTextScanner*) scannerWithString: (NSString*) aStr 
-				   set: (NSCharacterSet*) aSet 
-			   invertedSet: (NSCharacterSet*) anInvSet
-{
-  _GNUTextScanner *ret = [[self alloc] init];
-  [ret setString: aStr set: aSet invertedSet: anInvSet];
-  return [ret autorelease];
-}
-
-- (void) setString: (NSString*) aString set: (NSCharacterSet*) aSet 
-       invertedSet: (NSCharacterSet*) anInvSet
-{	
-  ASSIGN (string, aString); 
-  stringLength = [string length]; 
-  activeRange = NSMakeRange (0, stringLength);
-  ASSIGN (set, aSet); 
-  ASSIGN (iSet, anInvSet);
-}
-
-- (NSRange) _scanCharactersInverted: (BOOL) inverted
-{	
-  NSRange range = NSMakeRange (activeRange.location, 0);
-  NSCharacterSet *currentSet = inverted? iSet: set;
-  NSCharacterSet *currentISet = inverted? set: iSet;
-  
-  if (activeRange.location >= stringLength) 
-    return range;
-  
-  if ([currentSet characterIsMember: [string characterAtIndex: 
-					       activeRange.location]])
-    {	
-      range = [string rangeOfCharacterFromSet: currentSet options: 0 
-		      range: activeRange];
-    }
-  
-  if (range.length)
-    {
-      NSRange iRange = range;
-      iRange = [string rangeOfCharacterFromSet: currentISet options: 0 
-		       range: MakeRangeFromAbs (NSMaxRange (range), 
-						stringLength)];
-      if (iRange.length)	
-	range = MakeRangeFromAbs (range.location, iRange.location);
-      else				
-	range = MakeRangeFromAbs (range.location, stringLength);
-      
-      activeRange = MakeRangeFromAbs (NSMaxRange(range), stringLength);
-    }
-  return range;
-}
-
-- (NSRange) scanSetCharacters
-{
-  return [self _scanCharactersInverted: NO];
-}
-- (NSRange) scanNonSetCharacters
-{
-  return [self _scanCharactersInverted: YES];
-}
-
-- (BOOL) isAtEnd
-{	
-  return activeRange.location >= stringLength;
-}
-- (unsigned) scanLocation 
-{
-  return activeRange.location;
-}
-- (void) setScanLocation: (unsigned) aLoc 
-{ 
-  activeRange = MakeRangeFromAbs (aLoc, stringLength);
-}
-- (void) dealloc
-{
-  [string release];
-  [set release];
-  [iSet release];
-  [super dealloc];
-}
-@end
-
-// end: _GNUTextScanner implementation--------------------------------------
 
 /*
 @interface NSAttributedString(DrawingAddition)
@@ -786,7 +691,7 @@ static NSRange MakeRangeFromAbs(int a1,int a2)
       return NSMakeRange(0,0);
     }
 
-  switch(granularity)
+  switch (granularity)
     {
     case NSSelectByCharacter: 
       return NSIntersectionRange (proposedCharRange, 
@@ -1772,7 +1677,7 @@ static NSRange MakeRangeFromAbs(int a1,int a2)
 
   [_window makeFirstResponder: self];
   
-  switch([theEvent clickCount])
+  switch ([theEvent clickCount])
     {
     case 1: granularity = NSSelectByCharacter;
       break;
@@ -2207,7 +2112,7 @@ static NSRange MakeRangeFromAbs(int a1,int a2)
     }
 
   // Special Characters for generic NSText
-  switch(keyCode)
+  switch (keyCode)
     {	
     case NSUpArrowFunctionKey: 
       [self moveCursorUp: self];
@@ -2646,13 +2551,13 @@ _relocLayoutArray (NSMutableArray *lineLayoutInformation,
 					     delta: (int) insertionDelta 
 					actualLine: (int) insertionLineIndex
 {
-  NSDictionary *attributes = [self defaultTypingAttributes];
-  NSPoint drawingPoint = NSZeroPoint;
-  _GNUTextScanner *parscanner;
-  float	width = _frame.size.width;
-  unsigned startingIndex = 0,currentLineIndex;
-  _GNULineLayoutInfo  *lastValidLineInfo = nil;
-  NSArray *ghostArray = nil;	// for optimization detection
+  NSDictionary		*attributes = [self defaultTypingAttributes];
+  NSPoint		drawingPoint = NSZeroPoint;
+  NSScanner		*pScanner;
+  float			width = _frame.size.width;
+  unsigned		startingIndex = 0,currentLineIndex;
+  _GNULineLayoutInfo	*lastValidLineInfo = nil;
+  NSArray		*ghostArray = nil;	// for optimization detection
   _GNUSeekableArrayEnumerator *prevArrayEnum = nil;
   NSCharacterSet *invSelectionWordGranularitySet 
     = [selectionWordGranularitySet invertedSet];
@@ -2711,37 +2616,39 @@ _relocLayoutArray (NSMutableArray *lineLayoutInformation,
   currentLineIndex = aLine;
   
 // each paragraph
-  for (parscanner 
-	 = [_GNUTextScanner 
-	     scannerWithString: parsedString = [[self string] 
-						 substringFromIndex: 
-						   startingIndex] 
-	     set: selectionParagraphGranularitySet 
-	     invertedSet: invSelectionParagraphGranularitySet];
-       ![parscanner isAtEnd];)
+
+  parsedString = [[self string] substringFromIndex: startingIndex];
+  pScanner = [NSScanner scannerWithString: parsedString];
+  [pScanner setCharactersToBeSkipped: nil];
+  while ([pScanner isAtEnd] == NO)
     {
-      _GNUTextScanner *linescanner;
+      NSScanner	*lScanner;
       NSString	*paragraph;
-      NSRange paragraphRange, leadingNlRange, trailingNlRange;
-      unsigned startingParagraphIndex 
-	= [parscanner scanLocation] + startingIndex; 
-      unsigned startingLineCharIndex = startingParagraphIndex;
-      BOOL isBuckled = NO, inBuckling = NO;
-      
-      leadingNlRange = [parscanner scanSetCharacters];
-      // add the leading newlines of current paragraph 
-      // if any (only the first time)
-      if (leadingNlRange.length)	
-	{	
-	  [self addNewlines: leadingNlRange 
-		intoLayoutArray: lineLayoutInformation 
-		attributes: attributes 
-		atPoint: &drawingPoint 
-		width: width
-		characterIndex: startingLineCharIndex 
-		ghostEnumerator: prevArrayEnum
-		didShift: &nlDidShift 
-		verticalDisplacement: &yDisplacement];
+      NSRange	paragraphRange, leadingNlRange, trailingNlRange;
+      unsigned	currentLoc = [pScanner scanLocation];
+      unsigned	startingParagraphIndex = currentLoc + startingIndex; 
+      unsigned	startingLineCharIndex = startingParagraphIndex;
+      BOOL	isBuckled = NO, inBuckling = NO;
+
+      leadingNlRange
+	= scanRange(pScanner, selectionParagraphGranularitySet);
+      paragraphRange
+	= scanRange(pScanner, invSelectionParagraphGranularitySet);
+      trailingNlRange
+	= scanRange(pScanner, selectionParagraphGranularitySet);
+
+      if (leadingNlRange.length > 0)
+	{
+	  [self addNewlines: leadingNlRange
+	    intoLayoutArray: lineLayoutInformation 
+		 attributes: attributes 
+		    atPoint: &drawingPoint 
+		      width: width
+	     characterIndex: startingLineCharIndex 
+	    ghostEnumerator: prevArrayEnum
+		   didShift: &nlDidShift 
+       verticalDisplacement: &yDisplacement];
+
 	  if (nlDidShift)
 	    {
 	      if (insertionDelta  == 1)
@@ -2760,43 +2667,41 @@ _relocLayoutArray (NSMutableArray *lineLayoutInformation,
 	  startingLineCharIndex += leadingNlRange.length; 
 	  currentLineIndex += leadingNlRange.length;
 	}
-      paragraphRange = [parscanner scanNonSetCharacters];
-      
-      trailingNlRange = [parscanner scanSetCharacters];
+
       
       // each line
-      for (linescanner 
-	     = [_GNUTextScanner 
-		 scannerWithString: paragraph = [parsedString 
-						  substringWithRange: 
-						    paragraphRange]
-		 set: selectionWordGranularitySet 
-		 invertedSet: invSelectionWordGranularitySet];
-	   ![linescanner isAtEnd];)
+      paragraph = [parsedString substringWithRange: paragraphRange];
+      lScanner = [NSScanner scannerWithString: paragraph];
+      [lScanner setCharactersToBeSkipped: nil];
+      while ([lScanner isAtEnd] == NO)
 	{
-	  NSRect currentLineRect = NSMakeRect (0, drawingPoint.y, 0, 0);
+	  NSRect	currentLineRect = NSMakeRect (0, drawingPoint.y, 0, 0);
 	  // starts with zero, do not confuse with startingLineCharIndex
-	  unsigned localLineStartIndex = [linescanner scanLocation];		
-	  NSSize advanceSize = NSZeroSize;
+	  unsigned	localLineStartIndex = [lScanner scanLocation];
+	  NSSize	advanceSize = NSZeroSize;
 	  
 	  // scan the individual words to the end of the line
-	  for (; ![linescanner isAtEnd]; drawingPoint.x += advanceSize.width)
+	  for (; ![lScanner isAtEnd]; drawingPoint.x += advanceSize.width)
 	    {
-	      NSRange currentStringRange, trailingSpacesRange; 
-	      NSRange leadingSpacesRange;
-	      unsigned scannerPosition = [linescanner scanLocation];
+	      NSRange	currentStringRange, trailingSpacesRange; 
+	      NSRange	leadingSpacesRange;
+	      unsigned	scannerPosition = [lScanner scanLocation];
 	      
 	      // snack next word
 	      
 	      // leading spaces: only first time
-	      leadingSpacesRange = [linescanner scanSetCharacters];	
-	      currentStringRange = [linescanner scanNonSetCharacters];
-	      trailingSpacesRange = [linescanner scanSetCharacters];
+	      leadingSpacesRange
+		= scanRange(lScanner, selectionWordGranularitySet);
+	      currentStringRange
+		= scanRange(lScanner, invSelectionWordGranularitySet);
+	      trailingSpacesRange
+		= scanRange(lScanner, selectionWordGranularitySet);
+
 	      if (leadingSpacesRange.length) 
-		currentStringRange = NSUnionRange (leadingSpacesRange, 
+		currentStringRange = NSUnionRange(leadingSpacesRange, 
 						   currentStringRange);
 	      if (trailingSpacesRange.length) 
-		currentStringRange = NSUnionRange (trailingSpacesRange, 
+		currentStringRange = NSUnionRange(trailingSpacesRange, 
 						   currentStringRange);
 	      
 	      // evaluate size of current word and line so far
@@ -2876,7 +2781,7 @@ _relocLayoutArray (NSMutableArray *lineLayoutInformation,
 		_GNULineLayoutInfo *ghostInfo = nil, *thisInfo;
 		
 		// undo layout of last word
-		[linescanner setScanLocation: scannerPosition];	
+		[lScanner setScanLocation: scannerPosition];	
 		  
 		currentLineRect.origin.x = 0; 
 		currentLineRect.origin.y = drawingPoint.y;
@@ -2979,10 +2884,10 @@ _relocLayoutArray (NSMutableArray *lineLayoutInformation,
 		
 		// newline - induced premature lineending: flush
 	      } 
-	      else if ([linescanner isAtEnd])
+	      else if ([lScanner isAtEnd])
 		{
 		  _GNULineLayoutInfo *thisInfo;
-		  scannerPosition = [linescanner scanLocation];
+		  scannerPosition = [lScanner scanLocation];
 		  [lineLayoutInformation 
 		    addObject: (thisInfo 
 				= [_GNULineLayoutInfo 
