@@ -1,3 +1,8 @@
+Sat Aug  5 02:03:24 2000  Nicola Pero  <nicola@brainstorm.co.uk>
+
+	* Source/NSTextFieldCell.m ([NSTextFieldCell -initTextCell:]):
+	Reverted last change - do not draw background by default.
+
 2000-08-04  Adam Fedor  <fedor@gnu.org>
 
 	* Source/NSWorkspace.m ([_GSWorkspaceCenter -postNotification:]):
