@@ -696,7 +696,8 @@ static NSRecursiveLock	*windowsLock;
 {
   NSRect	r = frame;
 
-  r.origin.y = aPoint.y + frame.size.height;
+  r.origin = aPoint;
+  r.origin.y -= frame.size.height;
   [self setFrame: r display: YES];
 }
 
