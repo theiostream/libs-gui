@@ -1,3 +1,8 @@
+2002-07-22  Adam Fedor  <fedor@gnu.org>
+
+	* Source/NSImageCell.m (-setImage:): Check if non-nil.
+	Make sure size is not 0.
+
 Mon Jul 22 12:50:34 2002  Nicola Pero  <n.pero@mi.flashnet.it>
 
 	* Source/NSApplication.m (initialize_gnustep_backend): Remove
