@@ -1,3 +1,12 @@
+2000-07-30  Adam Fedor  <fedor@gnu.org>
+
+	* Source/NSBundleAdditions.m
+	(+loadNibFile:externalNameTable:withZone:): Read as gmodel if it has
+	proper extension.
+	(-loadNibFile:externalNameTable:withZone:): Fix a few bugs in 
+	determining proper extension. (patch from Gregory Casamento 
+	<borgheron@yahoo.com>).
+
 Sun Jul 30 01:33:15 2000  Nicola Pero  <nicola@brainstorm.co.uk>
 
 	* Source/NSText.m ([NSText -moveRight:]): ([NSText -moveLeft:]),
