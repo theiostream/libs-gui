@@ -363,6 +363,9 @@ static SEL getSel = @selector(objectAtIndex:);
 	}
     }
 
+  if (_selectedColumn == column)
+    _selectedCell = cells[_selectedRow][_selectedColumn];
+
   if (mode == NSRadioModeMatrix && !allowsEmptySelection && _selectedCell == nil)
     [self selectCellAtRow: 0 column: 0];
 }
@@ -440,6 +443,9 @@ static SEL getSel = @selector(objectAtIndex:);
 	}
     }
 
+  if (_selectedRow == row)
+    _selectedCell = cells[_selectedRow][_selectedColumn];
+
   if (mode == NSRadioModeMatrix && !allowsEmptySelection && _selectedCell == nil)
     [self selectCellAtRow: 0 column: 0];
 }
@@ -502,6 +508,10 @@ static SEL getSel = @selector(objectAtIndex:);
 		  format: @"attempt to put cell outside matrix bounds"];
     }
   ASSIGN(cells[row][column], newCell);
+
+  if ((row == _selectedRow) && (column == _selectedColumn))
+    _selectedCell = cells[row][column];
+
   [self setNeedsDisplayInRect: [self cellFrameAtRow: row column: column]];
 }
 
