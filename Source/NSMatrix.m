@@ -348,6 +348,8 @@ static SEL getSel = @selector(objectAtIndex:);
 	  cells[i][column] = old;
 	  selectedCells[i][column] = NO;
 	}
+	if (_selectedCell && (_selectedColumn >= column))
+	_selectedColumn++;
     }
 
   /*
@@ -362,9 +364,6 @@ static SEL getSel = @selector(objectAtIndex:);
 	  ASSIGN(cells[i][column], (*getImp)(cellArray, getSel, i));
 	}
     }
-
-  if (_selectedColumn == column)
-    _selectedCell = cells[_selectedRow][_selectedColumn];
 
   if (mode == NSRadioModeMatrix && !allowsEmptySelection && _selectedCell == nil)
     [self selectCellAtRow: 0 column: 0];
@@ -428,6 +427,8 @@ static SEL getSel = @selector(objectAtIndex:);
 	}
       cells[row] = oldr;
       selectedCells[row] = olds;
+      if (_selectedCell && (_selectedRow >= row))
+	_selectedRow++;
     }
 
   /*
@@ -442,9 +443,6 @@ static SEL getSel = @selector(objectAtIndex:);
 	  ASSIGN(cells[row][i], (*getImp)(cellArray, getSel, i));
 	}
     }
-
-  if (_selectedRow == row)
-    _selectedCell = cells[_selectedRow][_selectedColumn];
 
   if (mode == NSRadioModeMatrix && !allowsEmptySelection && _selectedCell == nil)
     [self selectCellAtRow: 0 column: 0];
@@ -507,10 +505,12 @@ static SEL getSel = @selector(objectAtIndex:);
       [NSException raise: NSRangeException
 		  format: @"attempt to put cell outside matrix bounds"];
     }
-  ASSIGN(cells[row][column], newCell);
 
-  if ((row == _selectedRow) && (column == _selectedColumn))
-    _selectedCell = cells[row][column];
+  if ((row == _selectedRow) && (column == _selectedColumn) 
+      && (_selectedCell != nil))
+    _selectedCell = newCell;
+  
+  ASSIGN(cells[row][column], newCell);
 
   [self setNeedsDisplayInRect: [self cellFrameAtRow: row column: column]];
 }
