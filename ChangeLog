@@ -1,3 +1,10 @@
+2002-07-26  Adam Fedor  <fedor@gnu.org>
+
+	* Source/NSStringDrawing.m (setupSpecialRun): Set run width
+	(patch from Nicholas Roard).
+
+	* Source/NSPrintInfo.m (+initPrintInfoDefaults): Add missing ';'
+	
 Thu Jul 25 12:51:52 2002  Nicola Pero  <n.pero@mi.flashnet.it>
 
 	* Source/NSApplication.m ([+sharedApplication]): Rewritten;
