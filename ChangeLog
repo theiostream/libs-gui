@@ -1,3 +1,44 @@
+2001-07-05  Mirko Viviani  <mirko.viviani@rccr.cremona.it>
+
+	* Source/NSComboBoxCell.m ([NSComboBoxCell -initTextCell:]): use -1
+	for selectedItem.
+	([NSComboBoxCell -deselectItemAtIndex:]): likewise.
+	([NSComboBoxCell -objectValueOfSelectedItem]): likewise.
+	([NSComboBoxCell -selectItemWithObjectValue:]): likewise.
+	([NSComboBoxCell -selectItemAtIndex:]): likewise. Post the notification
+	only if the item change.
+
+	* Source/NSTextView.m ([NSTextView -becomeKeyWindow]): make sure that
+	the cursor is not displayed when the window become key.
+	([NSTextView -resignKeyWindow]): likewise.
+	([NSTextView -shouldDrawInsertionPoint]): check for key window.
+
+	* Source/NSWindow.m ([NSWindow -setDefaultButtonCell:]): set modifier
+	mask to 0.
+
+	* Source/NSMatrix.m ([NSMatrix -_selectCell:atRow:column:]): scroll
+	the cell to visible when the matrix is inside a scrollView.
+	([NSMatrix -textDidEndEditing:]): for NSReturn, call
+	performKeyEquivalent: on the window to perform the action of default
+	button.
+
+	* Source/NSSavePanel.m ([NSSavePanel -selectText:]): remove unused code
+	(selectCellWithString:): execute a full search.
+	([NSSavePanel -ok:]): fixed the value of the form cell after clicking
+	with a selected cell.
+
+	* Source/NSOpenPanel.m ([NSOpenPanel -controlTextDidChange:]): execute
+	a full search.
+	([NSOpenPanel -ok:]): fixed the value of the form cell after clicking
+	with a selected cell.
+
+	* Source/NSBrowser.m ([NSBrowser -setPath:]): fixed to work with local
+	path name.
+
+	* Source/NSButton.m ([NSButton -becomeFirstResponder]): disable window
+	key equivalent for default button cell.
+	([NSButton -resignFirstResponder]): likewise but enable.
+
 2001-07-03  Adam Fedor  <fedor@gnu.org>
 
 	* Version: 0.7.0
