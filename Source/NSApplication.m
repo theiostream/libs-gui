@@ -188,8 +188,9 @@ initialize_gnustep_backend(void)
 	    path = [path stringByAppendingPathComponent: @"Bundles"];
 	    path = [path stringByAppendingPathComponent: bundleName];
 	    if ([[NSFileManager defaultManager] fileExistsAtPath: path])
-	      break;
-	    path = nil;
+	      {
+		break;
+	      }
 	  }
 	NSCAssert1(path != nil, 
 		  GSGuiLocalizedString (@"Unable to load backend %@",
