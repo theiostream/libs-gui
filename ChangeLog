@@ -1,3 +1,7 @@
+2001-06-15  Adam Fedor  <fedor@gnu.org>
+
+	* Version: snapshot release 0.6.9
+
 2001-06-14  Mirko Viviani  <mirko.viviani@rccr.cremona.it>
 
 	* Source/NSWindow.m ([NSWindow -setDefaultButtonCell:]): set button
