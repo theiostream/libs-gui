@@ -1,3 +1,8 @@
+Tue Feb 23 15:18:00 1999  Richard Frith-Macdonald <richard@brainstorm.co.uk>
+
+	Various files - fixed all the copyWithZone: methods where objects are
+	both copied AND retained.
+
 1999-02-22  Adam Fedor  <fedor@gnu.org>
 
 	* Version: update version.
