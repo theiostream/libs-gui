@@ -1,3 +1,12 @@
+Sun Jul 30 01:33:15 2000  Nicola Pero  <nicola@brainstorm.co.uk>
+
+	* Source/NSText.m ([NSText -moveRight:]): ([NSText -moveLeft:]),
+	([NSText -moveUp:]), ([NSText -moveDown:]): Tidied; removed call
+	to selectionRangeForProposedRange:granularity:.
+	([NSText -selectionRangeForProposedRange:granularity:]): Tidied,
+	fixed some bugs showing upon selecting text by words and deleting
+	text.
+
 2000-07-01  Fred Kiefer  <FredKiefer@gmx.de>
 
 	* Source/NSFileWrapper.m
