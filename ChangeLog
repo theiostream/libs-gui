@@ -1,3 +1,9 @@
+Mon Aug  9 13:57:48 1999  Adam Fedor  <fedor@ultra.doc.com>
+
+	* NSGraphicsContext.m (-DPSGetEventMatchingMask:...): Add check
+	for NSAppKitDefined and other masks.
+	* NSWindow.m (-sendEvent:): Get dragInfo object fix.
+
 1999-08-06  Adam Fedor  <fedor@gnu.org>
 
 	* many files: Update FSF mailing address.

@@ -1606,6 +1606,7 @@ static NSRecursiveLock	*windowsLock;
 	      break;
 
 	    case GSAppKitDraggingExit:
+	      dragInfo = [GSCurrentContext() _dragInfo];
 	      if (_lastDragView && accepts_drag)
 		GSPerformDragSelector(_lastDragView, 
 				      @selector(draggingExited:), dragInfo,
@@ -1615,6 +1616,7 @@ static NSRecursiveLock	*windowsLock;
 	    case GSAppKitDraggingDrop:
 	      if (_lastDragView && accepts_drag)
 		{
+	          dragInfo = [GSCurrentContext() _dragInfo];
 		  GSPerformDragSelector(_lastDragView, 
 					@selector(prepareForDragOperation:), 
 					dragInfo, action);

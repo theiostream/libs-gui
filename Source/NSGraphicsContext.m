@@ -1756,6 +1756,21 @@ NSGraphicsContext	*GSCurrentContext()
 			  matched = YES;
 			break;
 
+		      case NSAppKitDefined:
+			if (mask & NSAppKitDefinedMask)
+			  matched = YES;
+			break;
+
+		      case NSSystemDefined:
+			if (mask & NSSystemDefinedMask)
+			  matched = YES;
+			break;
+
+		      case NSApplicationDefined:
+			if (mask & NSApplicationDefinedMask)
+			  matched = YES;
+			break;
+
 		      case NSPeriodic:
 			if (mask & NSPeriodicMask)
 			  matched = YES;
