@@ -1,3 +1,22 @@
+2001-07-08  Mirko Viviani  <mirko.viviani@rccr.cremona.it>
+
+	* Source/NSSavePanel.m ([NSSavePanel -ok:]): do browser click after
+	resetting the text field.
+
+	* Source/NSOpenPanel.m ([NSOpenPanel -ok:]): do not allow selecting a
+	non existent file.
+
+	* Source/GSSimpleLayoutManager.m ([GSSimpleLayoutManager
+	-lineFragmentRectForGlyphAtIndex:effectiveRange:]): check for zero line
+	layout.
+	([GSSimpleLayoutManager -locationForGlyphAtIndex:]): likewise.
+	([GSSimpleLayoutManager -boundingRectForGlyphRange:inTextContainer:]):
+	likewise.
+	([GSSimpleLayoutManager -rectForCharacterIndex:]): likewise.
+	([GSSimpleLayoutManager -lineLayoutIndexForGlyphIndex:]): likewise.
+
+	* configure.in: Fixed FreeBSD library path.
+
 2001-07-03  Adam Fedor  <fedor@gnu.org>
 
 	* Version: 0.7.0

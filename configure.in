@@ -49,6 +49,13 @@ AC_ARG_WITH(jpeg_include,
 	[  --with-jpeg-include=DIR JPEG include files are in DIR], ,
         with_jpeg_include=)
 
+if test "$with_jpeg_library" = ""; then
+  case "$target_os" in
+    freebsd*)	with_jpeg_include="/usr/local/include"
+		with_jpeg_library="/usr/local/lib";;
+  esac
+fi
+
 if test -n "$with_jpeg_library"; then
   with_jpeg_library="-L$with_jpeg_library"
 fi
@@ -96,7 +103,7 @@ AC_ARG_WITH(tiff_include,
 if test "$with_tiff_library" = ""; then
   case "$target_os" in
     freebsd*)	with_tiff_include="/usr/local/include"
-		with_tiff_lib="/usr/local/lib";;
+		with_tiff_library="/usr/local/lib";;
   esac
 fi
 

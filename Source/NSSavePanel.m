@@ -751,8 +751,8 @@ static BOOL _gs_display_reading_progress = NO;
 
   if (selectedCell && [selectedCell isLeaf] == NO)
     {
-      [_browser doClick: matrix];
       [[_form cellAtIndex: 0] setStringValue: @""];
+      [_browser doClick: matrix];
       [_form selectTextAtIndex: 0];
       [_form setNeedsDisplay: YES];
 
