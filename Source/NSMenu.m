@@ -602,12 +602,12 @@ static Class menuCellClass = nil;
   return menuCells;
 }
 
-- initWithCoder:(NSCoder*)aDecoder
+- (id) initWithCoder: (NSCoder*)aDecoder
 {
   return self;
 }
 
-- (void)encodeWithCoder:(NSCoder*)aCoder
+- (void) encodeWithCoder: (NSCoder*)aCoder
 {
 }
 

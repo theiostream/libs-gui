@@ -202,18 +202,19 @@
 - (double)maxValue			{ return _maxValue; }
 - (float)floatValue			{ return _floatValue; }
 
-- (id)initWithCoder:(NSCoder*)decoder
+- (id) initWithCoder: (NSCoder*)decoder
 {
-  self = [super initWithCoder:decoder];
+  self = [super initWithCoder: decoder];
   [decoder decodeValuesOfObjCTypes:"ffff",
 	      &_minValue, &_maxValue, &_floatValue, &_altIncrementValue];
   return self;
 }
 
-- (void)encodeWithCoder:(NSCoder*)coder
+- (void) encodeWithCoder: (NSCoder*)coder
 {
+  [super encodeWithCoder: coder];
   [coder encodeValuesOfObjCTypes:"ffff",
-	      _minValue, _maxValue, _floatValue, _altIncrementValue];
+	      &_minValue, &_maxValue, &_floatValue, &_altIncrementValue];
 }
 
 @end

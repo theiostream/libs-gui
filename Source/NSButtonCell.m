@@ -93,19 +93,19 @@
 
 - initTextCell:(NSString *)aString
 {
-	[super initTextCell:aString];
+  [super initTextCell:aString];
 	
-	return [self _init];
+  return [self _init];
 }
 
-- (void)dealloc
+- (void) dealloc
 {
-	[altContents release];
-	[altImage release];
-	[keyEquivalent release];
-	[keyEquivalentFont release];
+  [altContents release];
+  [altImage release];
+  [keyEquivalent release];
+  [keyEquivalentFont release];
 	
-	[super dealloc];
+  [super dealloc];
 }
 
 //
@@ -490,24 +490,28 @@
 //
 // NSCoding protocol
 //
-- (void)encodeWithCoder:aCoder
+- (void) encodeWithCoder: (NSCoder*)aCoder
 {
   [super encodeWithCoder:aCoder];
 
   NSDebugLog(@"NSButtonCell: start encoding\n");
+  [aCoder encodeObject: keyEquivalent];
+  [aCoder encodeObject: keyEquivalentFont];
   [aCoder encodeObject: altContents];
   [aCoder encodeObject: altImage];
   [aCoder encodeValueOfObjCType: @encode(BOOL) at: &transparent];
   NSDebugLog(@"NSButtonCell: finish encoding\n");
 }
 
-- initWithCoder:aDecoder
+- (id) initWithCoder: (NSCoder*)aDecoder
 {
-  [super initWithCoder:aDecoder];
+  [super initWithCoder: aDecoder];
 
   NSDebugLog(@"NSButtonCell: start decoding\n");
-  altContents = [aDecoder decodeObject];
-  altImage = [aDecoder decodeObject];
+  [aDecoder decodeValueOfObjCType: @encode(id) at: &keyEquivalent];
+  [aDecoder decodeValueOfObjCType: @encode(id) at: &keyEquivalentFont];
+  [aDecoder decodeValueOfObjCType: @encode(id) at: &altContents];
+  [aDecoder decodeValueOfObjCType: @encode(id) at: &altImage];
   [aDecoder decodeValueOfObjCType: @encode(BOOL) at: &transparent];
   NSDebugLog(@"NSButtonCell: finish decoding\n");
 

@@ -439,22 +439,22 @@ unsigned int event_mask = NSLeftMouseDownMask | NSLeftMouseUpMask |
 //
 // NSCoding protocol
 //
-- (void)encodeWithCoder:aCoder
+- (void) encodeWithCoder: (NSCoder*)aCoder
 {
-	[super encodeWithCoder:aCoder];
+  [super encodeWithCoder: aCoder];
 	
-	[aCoder encodeValueOfObjCType: "i" at: &tag];
-	[aCoder encodeObject: cell];
+  [aCoder encodeValueOfObjCType: @encode(int) at: &tag];
+  [aCoder encodeObject: cell];
 }
 
-- initWithCoder:aDecoder
+- (id) initWithCoder: (NSCoder*)aDecoder
 {
-	[super initWithCoder:aDecoder];
+  [super initWithCoder: aDecoder];
 	
-	[aDecoder decodeValueOfObjCType: "i" at: &tag];
-	cell = [aDecoder decodeObject];
-	
-	return self;
+  [aDecoder decodeValueOfObjCType: @encode(int) at: &tag];
+  [aDecoder decodeValueOfObjCType: @encode(id) at: &cell];
+
+  return self;
 }
 
 @end

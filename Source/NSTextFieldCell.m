@@ -243,21 +243,21 @@
 //
 // NSCoding protocol
 //
-- (void)encodeWithCoder:aCoder
+- (void) encodeWithCoder: (NSCoder*)aCoder
 {
-  [super encodeWithCoder:aCoder];
+  [super encodeWithCoder: aCoder];
 
-  [aCoder encodeObject: background_color];
-  [aCoder encodeObject: text_color];
+  [aCoder encodeValueOfObjCType: @encode(id) at: &background_color];
+  [aCoder encodeValueOfObjCType: @encode(id) at: &text_color];
   [aCoder encodeValueOfObjCType: @encode(BOOL) at: &draw_background];
 }
 
-- initWithCoder:aDecoder
+- (id) initWithCoder: (NSCoder*)aDecoder
 {
-  [super initWithCoder:aDecoder];
+  [super initWithCoder: aDecoder];
 
-  background_color = [aDecoder decodeObject];
-  text_color = [aDecoder decodeObject];
+  [aDecoder decodeValueOfObjCType: @encode(id) at: &background_color];
+  [aDecoder decodeValueOfObjCType: @encode(id) at: &text_color];
   [aDecoder decodeValueOfObjCType: @encode(BOOL) at: &draw_background];
 
   return self;

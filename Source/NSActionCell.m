@@ -224,17 +224,17 @@
 //
 // NSCoding protocol
 //
-- (void)encodeWithCoder:aCoder
+- (void) encodeWithCoder: (NSCoder*)aCoder
 {
-  [super encodeWithCoder:aCoder];
+  [super encodeWithCoder: aCoder];
   [aCoder encodeValueOfObjCType: "i" at: &tag];
-  [aCoder encodeConditionalObject:target];
-  [aCoder encodeValueOfObjCType:@encode(SEL) at: &action];
+  [aCoder encodeConditionalObject: target];
+  [aCoder encodeValueOfObjCType: @encode(SEL) at: &action];
 }
 
-- initWithCoder:aDecoder
+- (id) initWithCoder: (NSCoder*)aDecoder
 {
-  [super initWithCoder:aDecoder];
+  [super initWithCoder: aDecoder];
   [aDecoder decodeValueOfObjCType: "i" at: &tag];
   target = [aDecoder decodeObject];
   [aDecoder decodeValueOfObjCType: @encode(SEL) at: &action];
