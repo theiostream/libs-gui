@@ -1,3 +1,8 @@
+2000-07-31 Richard Frith-Macdonald <rfm@gnu.org>
+
+	* Source/NSColor.m: ([-description]) corrected to remove quotes from
+	string listing color components.  problem reported by Benhur Stein
+
 2000-07-31  Fred Kiefer  <FredKiefer@gmx.de>
 
 	* Source/NSTextView.m
