@@ -86,14 +86,14 @@ static id _NSCONTROL_CELL_CLASS = nil;
 //
 // Creating copies
 //
-- copyWithZone:(NSZone *)zone
+- (id) copyWithZone: (NSZone*)zone
 {
-id c = NSCopyObject (self, 0, zone);
+  id		c = NSCopyObject(self, 0, zone);
+  NSCell	*o = [cell copy];
 
-	[cell retain];											// give new control 
-	[c setCell: [[cell copy] autorelease]];					// a copy of cell
-
-	return c;
+  [c setCell: o];
+  [o release];
+  return c;
 }
 
 //

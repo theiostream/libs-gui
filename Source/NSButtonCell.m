@@ -469,16 +469,16 @@
 }
 
 
-- (id)copyWithZone:(NSZone*)zone
+- (id) copyWithZone: (NSZone*)zone
 {
-  NSButtonCell* c = [super copyWithZone:zone];
+  NSButtonCell	*c = [super copyWithZone: zone];
 
-  c->altContents = [[altContents copy] retain];
-  if(altImage)
-  	c->altImage = [altImage retain];
-  c->keyEquivalent = [[keyEquivalent copy] retain];
-  if(keyEquivalentFont)
-	c->keyEquivalentFont = [keyEquivalentFont retain];
+  c->altContents = [altContents copyWithZone: zone];
+  if (altImage)
+    c->altImage = [altImage retain];
+  c->keyEquivalent = [keyEquivalent copyWithZone: zone];
+  if (keyEquivalentFont)
+    c->keyEquivalentFont = [keyEquivalentFont retain];
   c->keyEquivalentModifierMask = keyEquivalentModifierMask;
   c->transparent = transparent;
   c->highlightsByMask = highlightsByMask;

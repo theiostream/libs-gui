@@ -210,9 +210,9 @@
   return tag;
 }
 
-- (id)copyWithZone:(NSZone*)zone
+- (id) copyWithZone: (NSZone*)zone
 {
-  NSActionCell* c = [super copyWithZone:zone];
+  NSActionCell	*c = [super copyWithZone: zone];
 
   c->tag = tag;
   c->target = target;

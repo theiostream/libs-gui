@@ -958,9 +958,9 @@
 
 - (id) copyWithZone: (NSZone*)zone
 {
-  NSCell* c = [[isa allocWithZone: zone] init];
+  NSCell	*c = [[isa allocWithZone: zone] init];
 
-  c->contents = [contents copy];
+  c->contents = [contents copyWithZone: zone];
   ASSIGN(c->cell_image, cell_image);
   ASSIGN(c->cell_font, cell_font);
   c->cell_state = cell_state;

@@ -100,14 +100,14 @@ id _nsTextfieldCellClass = nil;
 	text_cursor = aCursor;
 }
 
-- copyWithZone:(NSZone *)zone
+- (id) copyWithZone: (NSZone*)zone
 {
-id c;
+  id c;
 
-	c = [super copyWithZone: zone];
-	[c setTextCursor: [NSCursor IBeamCursor]];
+  c = [super copyWithZone: zone];
+  [c setTextCursor: [NSCursor IBeamCursor]];
 
-	return c;
+  return c;
 }
 
 //
