@@ -1,3 +1,9 @@
+Mon Aug 30 15:53:41 1999  Martin Man  <Martin.Man@seznam.cz>
+
+        * Headers/AppKit/NSPopUpButton.h: 
+        * Source/NSPopUpButton.m: setTitle's return type changed from int
+        to void to conform openstep specs.
+
 Wed Sep  1  9:28:00 1999  Richard Frith-Macdonald <richard@brainstorm.co.uk>
 
 	* Tools/GNUmakefile.preamble: patch by doko@cs.tu-berlin.de so that

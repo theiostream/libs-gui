@@ -2277,6 +2277,12 @@ static NSView* findByTag(NSView *view, int aTag, unsigned *level)
   [aDecoder decodeValueOfObjCType: @encode(BOOL) at: &autoresize_subviews];
   NSDebugLLog(@"NSView", @"NSView: finish decoding\n");
 
+  frameMatrix = [NSAffineTransform new];
+  boundsMatrix = [NSAffineTransform new];
+  matrixToWindow = [NSAffineTransform new];
+  matrixFromWindow = [NSAffineTransform new];
+  [frameMatrix setFrameOrigin: frame.origin];
+
   /*
    *	Keep a note of whether this is a flipped view or not.
    */

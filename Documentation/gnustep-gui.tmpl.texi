@@ -311,7 +311,7 @@ argument was given.  The Info-gnustep.plist file could look like this:
 @node Alt Key,  , Setup, Setup
 @section X-Windows Alt Key
 
-I don't have the backedn docs setup yet, so this is here:
+I don't have the backend docs setup yet, so this is here:
 
 On an X-windows system, it's the X keyboard map that determines what is
 your 'alt' key. GNUstep uses the X 'cmd2' key as 'alt' - and you may

@@ -304,7 +304,7 @@
   return -1;
 }
 
-- (int)setTitle:(NSString *)aString
+- (void)setTitle:(NSString *)aString
 {
 }
 
