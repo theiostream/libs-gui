@@ -1,3 +1,10 @@
+Sun Feb  6 05:50:20 2000  Nicola Pero  <n.pero@mi.flashnet.it>
+
+	* Documentation/gnustep-gui.tmpl.texi (Window Manager): Added a
+	tiny section recommending to set "Click Window To Focus" in the
+	window manager configuration.  Also, improved the section on the
+	Standard Info Panel.
+
 Sat Feb  5 03:02:04 2000  Nicola Pero  <n.pero@mi.flashnet.it>
 
 	* Source/NSWindow.m ([-orderWindow:relativeTo:]): Fixed a quite
