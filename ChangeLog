@@ -1,3 +1,9 @@
+1999-08-12  Adam Fedor  <fedor@gnu.org>
+
+	* Model/GMArchiver.m (-encodeObject:withName:): Don't encode
+	object if there is a replacement object for it. (Patch from Benhur
+	Stein <Benhur-de-Oliveira.Stein@imag.fr>)
+
 1999-08-10  Adam Fedor  <fedor@gnu.org>
 
 	* Source/NSClipView.m (-setBoundsOrigin:): Remove
