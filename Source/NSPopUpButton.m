@@ -195,16 +195,19 @@ Class _nspopupbuttonCellClass = 0;
 - (void) selectItem: (id <NSMenuItem>)anObject
 {
   [_cell selectItem: anObject];
+  [self synchronizeTitleAndSelectedItem];
 }
 
 - (void) selectItemAtIndex: (int)index
 {
   [_cell selectItemAtIndex: index];
+  [self synchronizeTitleAndSelectedItem];
 }
 
 - (void) selectItemWithTitle: (NSString*)title
 {
   [_cell selectItemWithTitle: title];
+  [self synchronizeTitleAndSelectedItem];
 }
 
 - (int) numberOfItems
