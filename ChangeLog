@@ -1,3 +1,15 @@
+Thu Sep  2 16:42:00 1999  Richard Frith-Macdonald <richard@brainstorm.co.uk>
+
+        * NSWorkspace.m: Trivial fix to pass app when opening files.
+        * GSServicesManager.m: Fix to send open commands to app delegate
+        rather than to application object itsself.
+
+Thu Sep  2  9:50:00 1999  Richard Frith-Macdonald <richard@brainstorm.co.uk>
+
+	* NSWorkspace.m: Attempted fix for locateApplicationBinary and tidied.
+	Modified fix for getting file icons of directories where the extension
+	is meaningless.  Look for .dir.tiff as well.
+
 1999-09-01  Adam Fedor  <fedor@gnu.org>
 
 	* Source/NSFont.m ([NSFont -initWithCoder:]): Get the real font
