@@ -263,6 +263,7 @@ static NSRange MakeRangeFromAbs (int a1,int a2) // not the same as NSMakeRange!
 			  turnedOn: (BOOL)flag;
 - (void) drawSelectionAsRangeNoCaret: (NSRange)aRange;
 - (void) drawSelectionAsRange: (NSRange)aRange;
+- (void) undrawSelectionAsRange: (NSRange)aRange;
 
 @end
 
@@ -1574,16 +1575,8 @@ scanRange(NSScanner *scanner, NSCharacterSet* aSet)
       didLock = YES;
     }
 
-  if (_selected_range.length == 0)	// remove old cursor
-    {
-      [self drawInsertionPointAtIndex: _selected_range.location
-	    color: nil turnedOn: NO];
-    }
-  else
-    {
-      // This does an unhighlight of the old selected region
-      [self drawSelectionAsRange: _selected_range];
-    }
+  // This does an unhighlight of the old selected region
+  [self undrawSelectionAsRange: _selected_range];
 
   [self setSelectedRangeNoDrawing: range];
 
@@ -2190,7 +2183,9 @@ scanRange(NSScanner *scanner, NSCharacterSet* aSet)
   if (!_tf.is_selectable)
     return;
 
-  if (![_window makeFirstResponder: self])
+  // Only try to make first responder if editable, otherwise the 
+  // delegate will stop it in becomeFirstResponder.
+  if (_tf.is_editable && ![_window makeFirstResponder: self])
     return;
 
   switch ([theEvent clickCount])
@@ -2214,13 +2209,7 @@ scanRange(NSScanner *scanner, NSCharacterSet* aSet)
   [self lockFocus];
 
   // clean up before doing the dragging
-  if (_selected_range.length == 0)	// remove old cursor
-    {
-      [self drawInsertionPointAtIndex: _selected_range.location
-	    color: nil turnedOn: NO];
-    }
-  else
-    [self drawSelectionAsRangeNoCaret: _selected_range];
+  [self undrawSelectionAsRange: _selected_range];
 
   //<!> make this non - blocking (or make use of timed entries)
   for (currentEvent = [_window
@@ -2237,6 +2226,9 @@ scanRange(NSScanner *scanner, NSCharacterSet* aSet)
 		    fromView: nil];
       proposedRange = MakeRangeFromAbs ([self characterIndexForPoint: point],
 					startIndex);
+      // Add one more character as selected, as zero length is cursor.
+      proposedRange.length++;
+ 
       chosenRange = [self selectionRangeForProposedRange: proposedRange
 			  granularity: granularity];
 
@@ -2281,9 +2273,12 @@ scanRange(NSScanner *scanner, NSCharacterSet* aSet)
   [self setSelectedRangeNoDrawing: chosenRange];
   if (!didDragging)
     [self drawSelectionAsRange: chosenRange];
-  else if (chosenRange.length  == 0)
-    [self drawInsertionPointAtIndex: chosenRange.location
-	  color: _caret_color turnedOn: YES];
+  else if (chosenRange.length == 0)
+    if ([self shouldDrawInsertionPoint])
+      {
+	[self drawInsertionPointAtIndex: chosenRange.location
+	      color: _caret_color turnedOn: YES];
+      }
 
   // remember for column stable cursor up/down
   _currentCursor = [self rectForCharacterIndex: chosenRange.location].origin;
@@ -2479,7 +2474,7 @@ scanRange(NSScanner *scanner, NSCharacterSet* aSet)
   // Add any clean-up stuff here
 
   if ([self shouldDrawInsertionPoint])
-  {
+    {
       [self lockFocus];
       [self drawInsertionPointAtIndex: _selected_range.location
 	    color: nil turnedOn: NO];
@@ -3535,11 +3530,24 @@ other than copy/paste or dragging. */
     {
       [self drawSelectionAsRangeNoCaret: aRange];
     }
-  else
+  else if ([self shouldDrawInsertionPoint])
     {
       [self drawInsertionPointAtIndex: aRange.location
 				color: _caret_color
 			     turnedOn: YES];
+    }
+}
+
+- (void) undrawSelectionAsRange: (NSRange) aRange
+{
+  if (aRange.length)
+    {
+      [self drawSelectionAsRangeNoCaret: aRange];
+    }
+  else if ([self shouldDrawInsertionPoint])
+    {
+      [self drawInsertionPointAtIndex: _selected_range.location
+	    color: nil turnedOn: NO];
     }
 }
 
