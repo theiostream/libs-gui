@@ -1,3 +1,7 @@
+2001-07-08  Adam Fedor  <fedor@gnu.org>
+
+	* Version: 0.7.0
+
 2001-07-08  Mirko Viviani  <mirko.viviani@rccr.cremona.it>
 
 	* Source/NSSavePanel.m ([NSSavePanel -ok:]): do browser click after
