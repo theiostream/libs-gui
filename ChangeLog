@@ -1,3 +1,10 @@
+Thu Jul 20 16:00:14 2000  Nicola Pero  <n.pero@mi.flashnet.it>
+
+	* Source/NSApplication.m ([-init]): Enclosed all initialization
+	into an autorelease pool as per specifications; moved
+	initialize_gnustep_backend () here so it is enclosed in the
+	autorelease pool too.
+
 2000-07-19  Adam Fedor  <fedor@gnu.org>
 
 	* Source/NSApplication.m (+sharedApplication): Initialize
