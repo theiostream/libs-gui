@@ -1,3 +1,9 @@
+Tue Feb  1 00:46:42 2000  Nicola Pero  <n.pero@mi.flashnet.it>
+
+	* Headers/AppKit/NSMenuItem.h: Removed unused ivar mi_hasSubmenu.
+	* Source/NSMenuItem.m ([-init]): Removed reference to the unused 
+	ivar.
+
 Mon Jan 31 00:24:17 2000  Nicola Pero  <n.pero@mi.flashnet.it>
 
 	Rewritten, fixed, NSPopUpButton appearance.  NB: When the button
