@@ -671,6 +671,10 @@ static NSRange MakeRangeFromAbs (int a1,int a2) // not the same as NSMakeRange!
 {
   NSRange lineRange;
 
+  // No editing
+  if (!mask)
+    return;
+
   lineRange = [self rebuildForRange: aRange
 		delta: delta];
   [self setNeedsDisplayForLineRange: lineRange];
@@ -1320,7 +1324,7 @@ scanRange(NSScanner *scanner, NSCharacterSet* aSet)
   _tf.is_selectable = YES;
   _tf.is_rich_text = NO;
   _tf.imports_graphics = NO;
-  _tf.draws_background = NO;
+  _tf.draws_background = YES;
   _tf.is_horizontally_resizable = NO;
   _tf.is_vertically_resizable = YES;
   _tf.uses_font_panel = YES;
@@ -1594,6 +1598,7 @@ scanRange(NSScanner *scanner, NSCharacterSet* aSet)
 	}
       // <!>enable caret timed entry
     }
+
   [self drawSelectionAsRange: range];
   [self scrollRangeToVisible: range];
 
@@ -2232,6 +2237,14 @@ scanRange(NSScanner *scanner, NSCharacterSet* aSet)
       chosenRange = [self selectionRangeForProposedRange: proposedRange
 			  granularity: granularity];
 
+/*      // Undraw old cursor
+      if (!prevChosenRange.length && [self shouldDrawInsertionPoint])
+        {
+	  [self drawInsertionPointAtIndex: prevChosenRange.location
+		color: nil turnedOn: NO];
+	}
+*/
+
       if (NSEqualRanges (prevChosenRange, chosenRange))
 	{
 	  if (!didDragging)
@@ -2242,6 +2255,7 @@ scanRange(NSScanner *scanner, NSCharacterSet* aSet)
 	  else
 	    continue;
 	}
+
       // this changes the selection without needing instance drawing
       // (carefully thought out ; - )
       if (!didScroll)
