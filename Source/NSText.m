@@ -37,10 +37,6 @@
 //	 - optimization: 3.paragraph made one less line due to delition 
 //                         of single char [opti hook 1; diff from 1.]
 
-#if !defined(ABS)
-    #define ABS(A)     ({ typeof(A) __a  = (A); __a < 0 ? - __a : __a; })
-#endif         // the definition in gstep-base produces warnings FIX ME FAR
-
 #include <gnustep/gui/config.h>
 #include <Foundation/NSNotification.h>
 #include <Foundation/NSString.h>
@@ -99,7 +95,6 @@ enum {
   float	drawingOffset;
   BOOL	dontDisplay;
   unsigned	type;
-  NSString	*fingerprintString;	// obsolete, unused
 }
 
 typedef enum
@@ -123,8 +118,6 @@ typedef enum
 - (void) setDrawingOffset: (float) anOffset;
 - (void) setDontDisplay: (BOOL) flag;
 - (void) setType: (unsigned) aType;
-- (NSString*) fingerprintString;
-- (void) setFingerprintString: (NSString*) aString;
 - (BOOL) isLineTerminatingParagraph;
 
 - (NSString*) description;
@@ -168,11 +161,6 @@ typedef enum
   return drawingOffset;
 }
 
-- (NSString*) fingerprintString 
-{
-  return fingerprintString;
-}
-
 - (void) setLineRange: (NSRange) aRange 
 {
   lineRange = aRange;
@@ -201,17 +189,11 @@ typedef enum
   type = aType;
 }
 
-- (void) setFingerprintString: (NSString*) aString
-{
-  ASSIGN (fingerprintString, aString);
-}
-
 - (NSString*) description
 {	
   return [[NSDictionary dictionaryWithObjectsAndKeys: 	
 			  NSStringFromRange(lineRange), @"LineRange",
 			  NSStringFromRect(lineRect), @"LineRect",
-			  fingerprintString, @"fingerprint",
 			  nil] 
 	   description];
 }
@@ -221,13 +203,6 @@ typedef enum
   // sort of hackish
   return type  == LineLayoutInfoType_Paragraph && lineRect.origin.x> 0;
 }	
-
-- (void) dealloc
-{
-  if (fingerprintString) 
-    [fingerprintString release];
-  [super dealloc];
-}
 @end
 
 static NSRange MakeRangeFromAbs (int a1,int a2) // not the same as NSMakeRange!
