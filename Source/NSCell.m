@@ -427,47 +427,22 @@ static Class	imageClass;
 	      delegate: (id)anObject
 		 event: (NSEvent *)theEvent
 {
-  NSRect bRect;
-
-  if (cell_type != NSTextCellType)
+  if (!controlView || !textObject || !cell_font ||
+			(cell_type != NSTextCellType))
     return;
-
-  [controlView lockFocus];
-  [[controlView window] makeFirstResponder: textObject];
-
-  bRect = [controlView convertRect:aRect toView:[[controlView window] contentView]];
-//  cellFrame.origin = [super_view convertPoint: frame.origin
-//                                       toView: [window contentView]];
-
-  NSLog(@"editWithFrame: aRect. x = %d, y = %d, width = %d, height = %d\n", 
-(int)aRect.origin.x,
-(int)aRect.origin.y,
-(int)aRect.size.width,
-(int)aRect.size.height);
-
-  NSLog(@"editWithFrame: bRect. x = %d, y = %d, width = %d, height = %d\n", 
-(int)bRect.origin.x,
-(int)bRect.origin.y,
-(int)bRect.size.width,
-(int)bRect.size.height);
-
-  bRect.origin.x -= 2;
-  bRect.size.width += 2;
 
   [textObject setDelegate: anObject];
 
-  [textObject setFrame: bRect];
-  NSEraseRect(aRect);
+  aRect.origin.y -= 1;
 
+  [textObject setFrame: aRect];
   [textObject setText: [self stringValue]];
-  
-  [[[controlView window] contentView] addSubview: textObject];
+  [controlView addSubview:textObject];  
+
+  [[controlView window] makeFirstResponder: textObject];
 
   if ([theEvent type] == NSLeftMouseDown)
     [textObject mouseDown:theEvent];
-
-  [textObject display];
-  [controlView unlockFocus];
 }
 
 /*
@@ -477,6 +452,7 @@ static Class	imageClass;
 - (void) endEditing: (NSText*)textObject
 {
   [textObject setDelegate: nil];
+  [textObject retain];
   [textObject removeFromSuperview];
   [self setStringValue: [textObject text]];
   [textObject setString:@""];
@@ -808,6 +784,8 @@ static inline NSPoint centerSizeInRect(NSSize innerSize, NSRect outerRect)
 {
   NSView	*cv = [NSView focusView];
 
+  NSLog(@"performClick:");
+
   [self highlight: YES withFrame: [cv frame] inView: cv];
   if ([self action])
     {
@@ -1025,6 +1003,8 @@ static inline NSPoint centerSizeInRect(NSSize innerSize, NSRect outerRect)
       NSDebugLog(@"NSCell mouse went up in cell\n");
       return YES;
     }
+
+  [controlView setNeedsDisplayInRect: cellFrame];
 
   NSDebugLog(@"NSCell mouse did not go up in cell\n");
   return NO;				// Otherwise return NO

@@ -3,6 +3,12 @@
 	* Model/GMAppKit.m: patch from Tim Bissell
 	<tim.bissell@dresdnerkb.com> adds proper decoding/encoding of
 	NSButtonCell titles.
+	* Source/NSCell.m: updated copy from HEAD.
+	* Source/NSText.m: ditto + minor additions.
+	* Source/NSView.m: patch to prevent X crashes.
+	* Source/NSMenu.m: multiple patches from HEAD.
+	* Source/NSPopUpButton.m: ditto.
+	* Source/NSSlider.m: patch to add missing unlockFocus.
  	* Source/NSBrowserCell.m: patch from Tim Bissell
 	<tim.bissell@dresdnerkb.com> set NSBrowerCell to be initially not
 	editable (mimcs OS 4.2 behaviour).

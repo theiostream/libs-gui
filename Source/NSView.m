@@ -493,7 +493,8 @@ GSSetDragTypes(NSView* obj, NSArray *types)
 
       if (window != nil)
 	[ctxt _removeDragTypes: t fromWindow: [window windowNumber]];
-      [ctxt _addDragTypes: t toWindow: [newWindow windowNumber]];
+      if (newWindow != nil)
+        [ctxt _addDragTypes: t toWindow: [newWindow windowNumber]];
     }
 
   window = newWindow;

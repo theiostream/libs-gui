@@ -50,8 +50,11 @@
 #include <AppKit/NSMenuItemCell.h>
 #include <AppKit/NSPopUpButton.h>
 #include <AppKit/NSPopUpButtonCell.h>
+#include <AppKit/NSScreen.h>
 
 static NSZone *menuZone = NULL;
+
+static NSString* NSMenuLocationsKey = @"NSMenuLocations";
 
 @implementation NSMenu
 
@@ -174,12 +177,10 @@ static NSZone *menuZone = NULL;
   [[aWindow contentView] addSubview:titleView];
   [titleView setMenu: self];
  
-/*
   [defaultCenter addObserver: self
                     selector: @selector(_showTornOffMenuIfAny:)
                     name: NSApplicationWillFinishLaunchingNotification 
                     object: theApp];
-*/
   [defaultCenter addObserver: self
                     selector: @selector(_deactivate:)
                     name: NSApplicationWillResignActiveNotification
@@ -383,7 +384,7 @@ static NSZone *menuZone = NULL;
 - (int) indexOfItem: (id <NSMenuItem>)anObject
 {
   if (![(NSMenuItemCell *)anObject isKindOfClass: [NSMenuItemCell class]]
-	  || [(id)anObject isKindOfClass: [NSPopUpButtonCell class]])
+	  || ![(id)anObject isKindOfClass: [NSPopUpButtonCell class]])
     {
       NSLog(@"You must use an NSMenuItemCell, or a derivative thereof.\n");
       return -1;
@@ -429,11 +430,23 @@ static NSZone *menuZone = NULL;
 	  return i;
 	}
     }
+
   return -1;
 }
 
 - (int) indexOfItemWithSubmenu: (NSMenu *)anObject
 {
+  int i;
+
+  for (i=0;i<[menu_items count];i++)
+    {
+      if ([[[menu_items objectAtIndex:i] title]
+	isEqual:[anObject title]])
+	{
+	  return i;
+	}
+    }
+  
   return -1;
 }
 
@@ -524,7 +537,7 @@ static NSZone *menuZone = NULL;
   id		cells;
   unsigned	i, count;
   id		theApp = [NSApplication sharedApplication];
-  
+
   if (menu_changed)
     [self sizeToFit];
 
@@ -586,14 +599,14 @@ static NSZone *menuZone = NULL;
       if (shouldBeEnabled != wasEnabled)
         {
           [cell setEnabled: shouldBeEnabled];
+	  [[self window] display];
+//          [menu_view setNeedsDisplay:YES];
+//	  [menu_view setNeedsDisplayInRect:[menu_view rectOfItemAtIndex:i]];
 // FIXME
 //          [menuCells setNeedsDisplayInRect: [menuCells cellFrameAtRow: i]];
         }
     }
           
-  if (menu_changed)
-    [self sizeToFit];
-         
   /* Reenable displaying of menus */
   [self setMenuChangedMessagesEnabled: YES];
 }
@@ -700,13 +713,11 @@ static NSZone *menuZone = NULL;
 
   if (!menu_is_beholdenToPopUpButton)
     {
-      [titleView setFrameOrigin: NSMakePoint(0, mFrame.size.height)];
-      [titleView setFrameSize: NSMakeSize (mFrame.size.width,21)];
-      size.height = mFrame.size.height+21;
-      [bWindow setFrame: NSMakeRect(300,300,size.width,size.height)
-	display: NO];
-      [aWindow setFrame: NSMakeRect(300,300,size.width,size.height)
-	display: YES];
+      size.height += 21;
+      [aWindow setContentSize: size];
+      [bWindow setContentSize: size];
+      [menu_view setFrameOrigin: NSMakePoint(0, 0)];
+      [titleView setFrame: NSMakeRect(0,size.height-21,size.width,21)];
     }
   else
     {
@@ -714,8 +725,10 @@ static NSZone *menuZone = NULL;
     }
 
 // FIXME, popup sets itself up.
-  
-  [menu_view setNeedsDisplay:YES];
+// [menu_view setNeedsDisplay:YES];
+
+  [aWindow display];
+
   menu_changed = NO;
 }
 
@@ -754,6 +767,30 @@ static NSZone *menuZone = NULL;
     [aWindow orderOut:nil];
 }
 
+- (void)_showTornOffMenuIfAny: (NSNotification*)notification
+{
+NSUserDefaults* defaults = [NSUserDefaults standardUserDefaults];
+NSDictionary* menuLocations = [defaults objectForKey: NSMenuLocationsKey];
+NSString* key;
+NSArray* array;
+      
+    if ([[NSApplication sharedApplication] mainMenu] == self)
+        key = nil;                                  // Ignore the main menu
+    else
+        key = [self title];
+                                                                 
+    if (key)
+        {
+        array = [menuLocations objectForKey: key];
+        if (array && [array isKindOfClass: [NSArray class]])
+            {
+	    [titleView windowBecomeTornOff];
+            [self _setTornOff:YES];
+            [self display];
+            }
+        }
+}
+
 - (BOOL) isFollowTransient
 {
   return menu_follow_transient;
@@ -762,27 +799,90 @@ static NSZone *menuZone = NULL;
 - (void) _setTornOff:(BOOL)flag
 { 
   menu_is_tornoff = flag;
+
   [[[self supermenu] menuView] setHighlightedItemIndex:-1];
+
+/*
+  if (flag)
+    {
+      if (menu_supermenu)
+        {
+          menu_supermenu->menu_attached_menu = nil;
+          menu_supermenu = nil;
+        }
+    }
+*/
 }
 
 - (void) _performMenuClose:(id)sender
 {
+  NSUserDefaults* defaults;
+  NSMutableDictionary* menuLocations;
+  NSString* key;
+
   [self _setTornOff:NO];
   [self close];
   [titleView _releaseCloseButton];
+
+  defaults = [NSUserDefaults standardUserDefaults];
+  menuLocations = [[[defaults objectForKey: NSMenuLocationsKey]
+			mutableCopy] autorelease];
+
+  key = [self title];                             // Remove window's position$
+  if (key)                                        // info from defaults db
+    {
+      [menuLocations removeObjectForKey: key];
+      [defaults setObject: menuLocations forKey: NSMenuLocationsKey];
+      [defaults synchronize];
+    }
 } 
 
 - (void) display
 {
     if (menu_changed)
         [self sizeToFit];
-    if (menu_supermenu)                         // query super menu for
-    {                                           // position
+
+    if (menu_supermenu && ![self isTornOff])                           // query super menu for
+      {                                           // position
         NSPoint location = [menu_supermenu locationForSubmenu: self];
   
         [aWindow setFrameOrigin: location];
         menu_supermenu->menu_attached_menu = self;
-    }
+      }
+    else
+      {
+        NSUserDefaults* defaults = [NSUserDefaults standardUserDefaults];
+        NSDictionary* menuLocations = [defaults
+                                        objectForKey: NSMenuLocationsKey];
+        NSString* key;
+        NSArray* array;
+        NSPoint origin; 
+      
+        if ([[NSApplication sharedApplication] mainMenu] == self)
+            key = @"Main menu";
+        else
+            key = [self title];
+      
+        if (key)
+            {
+            array = [menuLocations objectForKey: key];
+            if (array && [array isKindOfClass: [NSArray class]])
+                {
+                origin.x = [[array objectAtIndex: 0] floatValue];
+                origin.y = [[array objectAtIndex: 1] floatValue];
+                [aWindow setFrameOrigin: origin];
+                }
+            else
+              {
+	        float aPoint = [[NSScreen mainScreen] frame].size.height - [aWindow frame].size.height;
+
+                [aWindow setFrameOrigin:NSMakePoint(0,aPoint)];
+                [bWindow setFrameOrigin:NSMakePoint(0,aPoint)];
+              }
+            }
+      }
+
+  [self submenuAction: nil];
   
   menu_is_visible = YES;
   [aWindow orderFront:nil];
@@ -883,6 +983,13 @@ static NSZone *menuZone = NULL;
 
 - (void) mouseDown: (NSEvent*)theEvent
 {
+  NSUserDefaults *defaults;
+  NSMutableDictionary *menuLocations;
+  NSMenu 	*appMainMenu;
+  NSPoint origin;
+  NSArray* array;
+  NSString* key;
+
   NSPoint       lastLocation;
   NSPoint       location;
   unsigned      eventMask = NSLeftMouseUpMask | NSLeftMouseDownMask
@@ -958,7 +1065,27 @@ static NSZone *menuZone = NULL;
         }
     }
   [NSEvent stopPeriodicEvents];
+
   // save position code goes here. FIXME.
+  appMainMenu = [NSApp mainMenu];
+  defaults = [NSUserDefaults standardUserDefaults];
+  menuLocations = [[[defaults objectForKey: NSMenuLocationsKey] mutableCopy] autorelease]; 
+
+  if (!menuLocations)
+    menuLocations = [NSMutableDictionary dictionaryWithCapacity: 2];
+  origin = [[menu window] frame].origin;
+  array = [NSArray arrayWithObjects:
+                        [[NSNumber numberWithInt: origin.x] stringValue],
+                        [[NSNumber numberWithInt: origin.y] stringValue], nil];
+
+  if (menu == appMainMenu)
+    key = @"Main menu";
+  else
+    key = [menu title];                             // Save menu window pos
+
+  [menuLocations setObject: array forKey: key];         // in defaults databa
+  [defaults setObject: menuLocations forKey: NSMenuLocationsKey];
+  [defaults synchronize];
 }
 
 - (void) windowBecomeTornOff
