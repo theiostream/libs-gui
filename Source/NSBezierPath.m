@@ -491,7 +491,7 @@ static Class NSBezierPath_concrete_class = nil;
 //
 - (void)transformUsingAffineTransform:(NSAffineTransform *)transform
 {
-
+	[self subclassResponsibility:_cmd];
 }
 
 //
@@ -986,6 +986,36 @@ static Class NSBezierPath_concrete_class = nil;
 }
 
 //
+// Applying transformations.
+//
+- (void)transformUsingAffineTransform:(NSAffineTransform *)transform
+{
+	PathElement *elm;
+	NSBezierPathElement t;
+	NSPoint p, *pts;
+	int i;
+
+	for(i = 0; i < [pathElements count]; i++) {
+		elm = [pathElements objectAtIndex: i];
+		pts = [elm points];
+		t = [elm type];
+		if(t == NSCurveToBezierPathElement) {
+			p = [transform transformPoint: pts[0]];
+			[elm setPointAtIndex: 0 toPoint: p];
+			p = [transform transformPoint: pts[1]];
+			[elm setPointAtIndex: 1 toPoint: p];
+			p = [transform transformPoint: pts[2]];
+			[elm setPointAtIndex: 2 toPoint: p];
+		} else {									
+			p = [transform transformPoint: pts[0]];
+			[elm setPointAtIndex: 0 toPoint: p];
+		}	
+	}
+	
+	[self calculateDraftPolygon];
+}
+
+//
 // Path info
 //
 - (BOOL)isEmpty
@@ -1238,7 +1268,7 @@ static Class NSBezierPath_concrete_class = nil;
 	PathElement *elm;
 	NSBezierPathElement bpt;
 	NSPoint p, *pts;
-	double x, y, t, k = 0.025;
+	double x, y, t, k = 0.25;
 	float maxx, minx, maxy, miny;
 	float cpmaxx, cpminx, cpmaxy, cpminy;	
 	int i;

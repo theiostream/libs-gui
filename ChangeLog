@@ -1,3 +1,7 @@
+Fri Feb 11 20:18:10 2000  Enrico Sersale  <enrico@imago.ro>
+
+   * Source/NSBezierPath.m: ([-transformUsingAffineTransform:]) implemented.
+	
 2000-02-09  Adam Fedor  <fedor@gnu.org>
 
 	* Documentation/announce.tmpl.texi: Update.
