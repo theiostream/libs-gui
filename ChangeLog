@@ -1,3 +1,10 @@
+Thu Feb  3 03:45:08 2000  Nicola Pero  <n.pero@mi.flashnet.it>
+
+	* Source/NSButtonCell.m ([-drawInteriorWithFrame:inView:]):
+	NSImageAbove, NSImageBelow: Rewritten.  In these cases now we
+	determine the space taken by the text; then all the remaining
+	space is given to the image, which is centered in it.
+
 Thu Feb  3 02:20:29 2000  Nicola Pero  <n.pero@mi.flashnet.it>
 
 	* Source/NSButtonCell.m ([-cellSize]): Bug fix: typo would prevent
