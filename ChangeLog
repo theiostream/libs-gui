@@ -1,4 +1,8 @@
-Wed Feb 24  8:56:00 1999  Richard Frith-Macdonald <richard@brainstorm.co.uk>
+1999-03-01  Adam Fedor  <fedor@gnu.org>
+
+	* Update documentation.
+
+xWed Feb 24  8:56:00 1999  Richard Frith-Macdonald <richard@brainstorm.co.uk>
 
 	Benhur reported oddity in cell drawing code - cells were drawing their
 	backgrounds in the method to draw the frame.  Fixed this by moving
