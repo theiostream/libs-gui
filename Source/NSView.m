@@ -1004,7 +1004,7 @@ static SEL	invalidateSel = @selector(_invalidateCoordinates);
 		   * Having drawn ourself into the rect, we must unconditionally
 		   * draw any subviews that are also in that rectangle.
 		   */
-		  isect = NSIntersectionRect(rect, subviewFrame);
+		  isect = NSIntersectionRect(aRect, subviewFrame);
 		  if (NSIsEmptyRect(isect) == NO)
 		    {
 		      isect = [subview convertRect: isect

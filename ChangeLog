@@ -1,3 +1,9 @@
+Mon Feb 22  5:52:00 1999  Richard Frith-Macdonald <richard@brainstorm.co.uk>
+
+	* Source/NSView.m: ([-displayIfNeededInRectIgnoringOpacity:]) a two
+	character change to fix a redisplay problem - already in the main
+	cvs branch.
+
 Sun Feb 21 14:43:57 1999  Masatake Yamato  <masata-y@is.aist-nara.ac.jp>
 
 	* Panels/GNUmakefile (before-uninstall): Use -d instead of -e.
