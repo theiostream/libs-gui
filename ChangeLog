@@ -1,3 +1,10 @@
+Thu Jul 25 12:51:52 2002  Nicola Pero  <n.pero@mi.flashnet.it>
+
+	* Source/NSApplication.m ([+sharedApplication]): Rewritten;
+	documented verbosely the method.
+	([-init]): Rewritten code checking, setting and managing NSApp;
+	documented verbosely the method.
+
 2002-07-22  Adam Fedor  <fedor@gnu.org>
 
 	* Source/NSImageCell.m (-setImage:): Check if non-nil.
