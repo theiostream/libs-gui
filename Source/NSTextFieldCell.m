@@ -79,8 +79,8 @@
   [self setEditable:YES];
   [self setAlignment:NSLeftTextAlignment];
 
-  [self setBackgroundColor: [NSColor whiteColor]];
-  [self setTextColor: [NSColor blackColor]];
+  [self setBackgroundColor: [NSColor textBackgroundColor]];
+  [self setTextColor: [NSColor textColor]];
   [self setFont: [NSFont systemFontOfSize:0]];
   draw_background = YES;
   return self;
@@ -227,6 +227,32 @@
 - (void)setStringValue:(NSString *)aString
 {
   [super setStringValue:aString];
+}
+
+//
+// Drawing
+//
+- (void) drawInteriorWithFrame: (NSRect)cellFrame inView: (NSView*)controlView
+{
+  cellFrame = NSInsetRect(cellFrame, xDist, yDist);
+
+  if ([self drawsBackground])
+    {
+      [background_color set];
+      NSRectFill(cellFrame);
+    }
+
+  switch ([self type])
+    {
+      case NSTextCellType:
+           [self _drawText: [self stringValue] inFrame: cellFrame];
+           break;
+      case NSImageCellType:
+           [self _drawImage: [self image] inFrame: cellFrame];
+           break;
+      case NSNullCellType:
+          break;
+    }
 }
 
 //
