@@ -1092,9 +1092,14 @@ NSAssert([event retainCount] > 0, NSInternalInconsistencyException);
 
 - (void) setMainMenu: (NSMenu*)aMenu
 {
-  unsigned i, j;
-  NSMenuItem *mc;
-  NSArray *mi;
+  unsigned	i, j;
+  NSMenuItem	*mc;
+  NSArray	*mi;
+
+  if (main_menu != nil && main_menu != aMenu)
+    {
+      [main_menu close];
+    }
 
   ASSIGN(main_menu, aMenu);
 
@@ -1112,6 +1117,12 @@ NSAssert([event retainCount] > 0, NSInternalInconsistencyException);
 	  windows_menu = mc;
 	  break;
 	}
+    }
+
+  if ([self isActive])
+    {
+      [main_menu update];
+      [main_menu display];
     }
 }
 

@@ -1,3 +1,11 @@
+Sat Aug 21  8:00:00 1999  Richard Frith-Macdonald <richard@brainstorm.co.uk>
+
+	* Source/NSApplication: ([-setMainMenu:]) close the old main menu
+	(if any) and display the new one if the app is active.
+	* Headers/AppKit/NSWindow.h: Changed ivar to support flush enable
+	* Source/NSWindow.m: Fixed frame sizing to permit setting of frame
+	beyond min/max size.  Fixed bug in enable/disable flush.
+
 1999-08-12  Adam Fedor  <fedor@gnu.org>
 
 	* Model/GMArchiver.m (-encodeObject:withName:): Don't encode
