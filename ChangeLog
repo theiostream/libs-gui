@@ -1,3 +1,8 @@
+Mon Feb  7 18:55:29 2000  Nicola Pero  <n.pero@mi.flashnet.it>
+
+	* Source/NSMatrix.m ([-mouseDown:]): Pass mouse down to super if
+	we have no cells.
+
 Mon Feb  7 03:06:36 2000  Nicola Pero  <n.pero@mi.flashnet.it>
 
 	This bug was crashing GNUstep while I was doing experiments with
