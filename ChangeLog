@@ -1,3 +1,8 @@
+1999-08-24  Adam Fedor  <fedor@gnu.org>
+
+	* Source/NSPanel.m (NSRun...AlertPanel): Change window mapping to
+	orderFrontRegardless so panel comes up even when app is not active.
+
 1999-08-22  Adam Fedor  <fedor@gnu.org>
 
 	* Documentation/gnustep-gui.tmpl.texi: New with GNUstep specific
