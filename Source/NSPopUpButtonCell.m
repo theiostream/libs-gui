@@ -46,6 +46,49 @@
 }
 @end
 
+/* Same as [NSWindow -convertBaseToScreen:] with the difference 
+   that detects and fixes at run time bugs in the window frame management */
+/* frame is a frame where the mouse is supposed to be. 
+   If the mouse is out of that frame, it means the window code has got the 
+   window origin wrong -- presumably by a decoration height.
+   Looking if mouse is upper or lower than the given frame we determine 
+   if decoration window size need to be added or subtracted. */
+NSPoint 
+_convertBaseToScreen_with_fix (NSRect frame, NSWindow *window, NSPoint point)
+{
+  /* We get mouse position */
+  NSPoint mouse = [window mouseLocationOutsideOfEventStream]; 
+  float   l, r, b; 
+  float   t = 0;
+  NSPoint ret;
+  
+  /* If the reported mouse position is not in frame 
+     this means that the window frame origin is broken. */
+  if (mouse.y > frame.origin.y + frame.size.height)
+    {
+      NSLog (@"Window Frame Origin Bug Detected: point reported higher");
+      NSLog (@"Workaround enabled.");
+      DPSstyleoffsets (GSCurrentContext (), &l, &r, &t, &b, 
+		       [window styleMask]);
+    }
+  else if (mouse.y < frame.origin. y)
+    {
+      NSLog (@"Window Frame Origin Bug Detected: point reported lower");
+      NSLog (@"Workaround enabled.");
+      DPSstyleoffsets (GSCurrentContext (), &l, &r, &t, &b, 
+		       [window styleMask]);
+      t = -t;
+    }
+  
+  /* Convert the origin */
+  ret = [window convertBaseToScreen: point];
+
+  /* Add the bug correction */
+  ret.y += t;
+
+  return ret;
+}
+
 /* The image to use in a specific popupbutton is
  * _pbc_image[_pbcFlags.pullsDown]; that is, _pbc_image[0] if it is a
  * popup menu, _pbc_image[1] if it is a pulls down list.  */
@@ -431,6 +474,8 @@ static NSImage *_pbc_image[2];
   NSWindow              *cvWin = [controlView window];
   NSMenuView            *mr = [_menu menuRepresentation];
   int                   items;
+  NSRect                origCellFrame = [controlView convertRect: cellFrame 
+						     toView: nil];
 
   [nc postNotificationName: NSPopUpButtonCellWillPopUpNotification
       object: self];
@@ -455,10 +500,14 @@ static NSImage *_pbc_image[2];
     }
 
   // Convert to Screen Coordinates
+
+  /* Convert to content view */
   cellFrame = [controlView convertRect: cellFrame 
 			   toView: nil];
-  cellFrame.origin = [cvWin convertBaseToScreen: cellFrame.origin];
-  
+
+  cellFrame.origin = _convertBaseToScreen_with_fix (origCellFrame, cvWin, 
+						    cellFrame.origin);
+
   // Ask the MenuView to attach the menu to this rect
   if (_pbcFlags.pullsDown)
     {
