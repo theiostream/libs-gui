@@ -1,8 +1,23 @@
+Sat Feb 12 19:47:14 2000  Nicola Pero  <n.pero@mi.flashnet.it>
+
+	* Source/NSPopUpButton.m ([-selectItem:]): Bug fix: Update menu
+	knowledge of the selected item.  ([-selectItemWithTitle:]),
+	([-selectItemAtIndex:]), ([-selectItem:]): Bug fix: Invoke
+	synchronizeTitleAndSelectedItem to update what is displayed.
+
+Sat Feb 12 18:11:32 2000  Nicola Pero  <n.pero@mi.flashnet.it>
+
+	* Source/NSWindow.m ([-setContentView:]): When expanding the new
+	content view to cover the whole window, do it using the nice way,
+	resizeWithOldSuperviewSize:, which allows the view to reorganize
+	its subviews for the new size.  
+	
 Sat Feb 12 17:53:00 2000  Richard Frith-Macdonald <richard@brainstorm.co.uk>
 
-	* Source/NSMenu.m: Replace non-working archiving code with drastically
-	simplified code that does work in the normal case, but doesn't deal
-	with non-standard menu representations.  This lets Gorm work with menus.
+	* Source/NSMenu.m: Replace non-working archiving code with
+	drastically simplified code that does work in the normal case, but
+	doesn't deal with non-standard menu representations.  This lets
+	Gorm work with menus.  
 	* Source/NSMenuItem.m: Don't archive parent menu.
 
 Fri Feb 11 20:18:10 2000  Enrico Sersale  <enrico@imago.ro>
