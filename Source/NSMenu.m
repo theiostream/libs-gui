@@ -1010,7 +1010,10 @@ static NSString	*NSMenuLocationsKey = @"NSMenuLocations";
       defaults = [NSUserDefaults standardUserDefaults];
       menuLocations = [[defaults objectForKey: NSMenuLocationsKey] mutableCopy];
       [menuLocations removeObjectForKey: key];
-      [defaults setObject: menuLocations forKey: NSMenuLocationsKey];
+      if ([menuLocations count] > 0)
+        [defaults setObject: menuLocations forKey: NSMenuLocationsKey];
+      else
+        [defaults removeObjectForKey: NSMenuLocationsKey];
       RELEASE(menuLocations);
       [defaults synchronize];
     }
@@ -1448,7 +1451,9 @@ static NSString	*NSMenuLocationsKey = @"NSMenuLocations";
       defaults = [NSUserDefaults standardUserDefaults];
       menuLocations = [[defaults objectForKey: NSMenuLocationsKey] mutableCopy];
       if (menuLocations == nil)
-	menuLocations = [NSMutableDictionary dictionaryWithCapacity: 2];
+	{
+	  menuLocations = [[NSMutableDictionary alloc] initWithCapacity: 2];
+	}
       locString = [[menu window] stringWithSavedFrame];
       [menuLocations setObject: locString forKey: key];
       [defaults setObject: menuLocations forKey: NSMenuLocationsKey];
