@@ -1,3 +1,9 @@
+Thu Feb  3 02:56:10 2000  Enrico Sersale <enrico@imago.ro>
+
+	* Source/NSBezierPath.m Partially rewritten, fixed, 
+	added a concrete class
+	([-setCachesBezierPath:]): Implemented using NSImage.
+
 Thu Feb  3 03:45:08 2000  Nicola Pero  <n.pero@mi.flashnet.it>
 
 	* Source/NSButtonCell.m ([-drawInteriorWithFrame:inView:]):
