@@ -602,7 +602,7 @@ static NSRange MakeRangeFromAbs(int a1,int a2)
   if ((!sendType || [sendType isEqual: NSStringPboardType]) 
       && (!returnType || [returnType isEqual: NSStringPboardType]))
     {
-      if (([self selectedRange].length || !sendType)
+      if ((selected_range.length || !sendType)
 	  && ([self isEditable] || !returnType))
 	{
 	  return self;
@@ -617,7 +617,6 @@ static NSRange MakeRangeFromAbs(int a1,int a2)
                              types: (NSArray*)sendTypes
 {
   NSArray      *types;
-  NSRange      range;
   NSString     *string;
         
   if ([sendTypes containsObject: NSStringPboardType] == NO)
@@ -626,9 +625,8 @@ static NSRange MakeRangeFromAbs(int a1,int a2)
     }
   types = [NSArray arrayWithObjects: NSStringPboardType, nil];
   [pb declareTypes: types owner: nil];
-  range = [self selectedRange];
   string = [self string];
-  string = [string substringWithRange: range];
+  string = [string substringWithRange: selected_range];
   return [pb setString: string forType: NSStringPboardType];
 }
 
@@ -645,7 +643,7 @@ static NSRange MakeRangeFromAbs(int a1,int a2)
       
       if ([self isRichText])
 	{
-	  [self setTextColor: color range: [self selectedRange]];
+	  [self setTextColor: color range: selected_range];
 	}
       else
 	[self setTextColor: color];
@@ -1033,12 +1031,11 @@ static NSRange MakeRangeFromAbs(int a1,int a2)
     {	
       if ([self isRichText])
 	{
-	  NSRange selectedRange = [self selectedRange];
-	  NSRange searchRange = selectedRange;
+	  NSRange searchRange = selected_range;
 	  NSRange foundRange;
 	  int maxSelRange;
 	  
-	  for (maxSelRange = NSMaxRange(selectedRange); 
+	  for (maxSelRange = NSMaxRange(selected_range); 
 	       searchRange.location < maxSelRange;
 	       searchRange = NSMakeRange (NSMaxRange (foundRange), 
 					  maxSelRange - NSMaxRange(foundRange)))
@@ -1158,7 +1155,7 @@ static NSRange MakeRangeFromAbs(int a1,int a2)
 
 - (BOOL) shouldDrawInsertionPoint
 {	
-  return ([self selectedRange].length == 0) && [self isEditable];
+  return (selected_range.length == 0) && [self isEditable];
 }
 
 - (void) drawInsertionPointInRect: (NSRect)rect
@@ -1540,16 +1537,16 @@ static NSRange MakeRangeFromAbs(int a1,int a2)
     {
       BOOL doUnderline = YES;
       if ([[rtfContent attribute: NSUnderlineStyleAttributeName 
-		       atIndex: [self selectedRange].location 
+		       atIndex: selected_range.location 
 		       effectiveRange: NULL] intValue])	
 	doUnderline = NO;
       
-      if ([self selectedRange].length)
+      if (selected_range.length)
 	{
 	  [rtfContent addAttribute: NSUnderlineStyleAttributeName 
 		      value: [NSNumber numberWithInt: doUnderline] 
-		      range: [self selectedRange]];
-	  [self rebuildFromCharacterIndex: [self selectedRange].location];
+		      range: selected_range];
+	  [self rebuildFromCharacterIndex: selected_range.location];
 	} 
       else  // no redraw necess.
 	[[self typingAttributes] 
@@ -1562,11 +1559,11 @@ static NSRange MakeRangeFromAbs(int a1,int a2)
 {
   if ([self isRichText])
     {
-      if ([self selectedRange].length)
+      if (selected_range.length)
 	{
 	  [rtfContent removeAttribute: NSUnderlineStyleAttributeName 
-		      range: [self selectedRange]];
-	  [self rebuildFromCharacterIndex: [self selectedRange].location];
+		      range: selected_range];
+	  [self rebuildFromCharacterIndex: selected_range.location];
 	} 
       else // no redraw necess.
 	[[self typingAttributes] 
@@ -1595,9 +1592,9 @@ static NSRange MakeRangeFromAbs(int a1,int a2)
 {
   [self scrollRectToVisible: 
 	  NSUnionRect ([self rectForCharacterIndex: 
-			       [self selectedRange].location],
+			       selected_range.location],
 		       [self rectForCharacterIndex: 
-			       NSMaxRange ([self selectedRange])])];
+			       NSMaxRange (selected_range)])];
 }
 
 //
@@ -1679,14 +1676,18 @@ static NSRange MakeRangeFromAbs(int a1,int a2)
   unsigned cursorIndex;
   NSPoint cursorPoint;
 
-  if ([self selectedRange].length) 
+  /* Do nothing if we are at beginning of text */
+  if (selected_range.location == 0)
+    return;
+
+  if (selected_range.length) 
     {
       currentCursorX = [self rectForCharacterIndex: 
-			       [self selectedRange].location].origin.x;
+			       selected_range.location].origin.x;
       currentCursorY = [self rectForCharacterIndex: 
-			       [self selectedRange].location].origin.y;
+			       selected_range.location].origin.y;
     }
-  cursorIndex = [self selectedRange].location;
+  cursorIndex = selected_range.location;
   cursorPoint = [self rectForCharacterIndex: cursorIndex].origin;
   cursorIndex = [self characterIndexForPoint: 
 			NSMakePoint (currentCursorX + 0.001, 
@@ -1703,14 +1704,18 @@ static NSRange MakeRangeFromAbs(int a1,int a2)
   unsigned cursorIndex;
   NSRect cursorRect;
 
-  if ([self selectedRange].length) 
+  /* Do nothing if we are at end of text */
+  if (selected_range.location == [self textLength])
+    return;
+
+  if (selected_range.length) 
     {
       currentCursorX = [self rectForCharacterIndex: 
-			       NSMaxRange ([self selectedRange])].origin.x;
+			       NSMaxRange (selected_range)].origin.x;
       currentCursorY = [self rectForCharacterIndex: 
-			       NSMaxRange ([self selectedRange])].origin.y;
+			       NSMaxRange (selected_range)].origin.y;
     }
-  cursorIndex = [self selectedRange].location;
+  cursorIndex = selected_range.location;
   cursorRect = [self rectForCharacterIndex: cursorIndex];
   cursorIndex = [self characterIndexForPoint: 
 			NSMakePoint (currentCursorX + 0.001, 
@@ -1723,22 +1728,30 @@ static NSRange MakeRangeFromAbs(int a1,int a2)
 }
 - (void) moveCursorLeft: sender
 {	
+  /* Do nothing if we are at beginning of text */
+  if (selected_range.location == 0)
+    return;
+
   [self setSelectedRange: 
 	  [self selectionRangeForProposedRange: 
-		  NSMakeRange ([self selectedRange].location - 1, 0) 
+		  NSMakeRange (selected_range.location - 1, 0) 
 		granularity: NSSelectByCharacter]];
   currentCursorX = [self rectForCharacterIndex: 
-			   [self selectedRange].location].origin.x;
+			   selected_range.location].origin.x;
 }
 - (void) moveCursorRight: sender
 {
+  /* Do nothing if we are at end of text */
+  if (selected_range.location == [self textLength])
+    return;
+
   [self setSelectedRange: 
 	  [self selectionRangeForProposedRange: 
-		  NSMakeRange (MIN (NSMaxRange ([self selectedRange]) + 1, 
+		  NSMakeRange (MIN (NSMaxRange (selected_range) + 1, 
 				    [self textLength]), 0)
 		granularity: NSSelectByCharacter]];
   currentCursorX = [self rectForCharacterIndex: 
-			   [self selectedRange].location].origin.x;
+			   selected_range.location].origin.x;
 }
 
 //
@@ -1780,13 +1793,13 @@ static NSRange MakeRangeFromAbs(int a1,int a2)
   [self lockFocus];
   
   // clean up before doing the dragging
-  if ([self selectedRange].length == 0)	// remove old cursor
+  if (selected_range.length == 0)	// remove old cursor
     {
-      [self drawInsertionPointAtIndex: [self selectedRange].location 
+      [self drawInsertionPointAtIndex: selected_range.location 
 	    color: nil turnedOn: NO];
     } 
   else 
-    [self drawSelectionAsRangeNoCaret: [self selectedRange]];
+    [self drawSelectionAsRangeNoCaret: selected_range];
   
   //<!> make this non - blocking (or make use of timed entries)
   for (currentEvent = [_window 
@@ -1906,7 +1919,7 @@ static NSRange MakeRangeFromAbs(int a1,int a2)
 	{
 	  [self drawPlainLinesInLineRange: redrawLineRange];
 	}
-      [self drawSelectionAsRange: [self selectedRange]];
+      [self drawSelectionAsRange: selected_range];
     }
   
   if ([self drawsBackground])	// clean up the remaining area under text of us
@@ -1927,7 +1940,7 @@ static NSRange MakeRangeFromAbs(int a1,int a2)
 	  if (![lineLayoutInformation count] 
 	      || [[lineLayoutInformation lastObject] 
 		   type] == LineLayoutInfoType_Paragraph)
-	    [self drawSelectionAsRange: [self selectedRange]];
+	    [self drawSelectionAsRange: selected_range];
 	}
     } 
   
@@ -1958,7 +1971,7 @@ static NSRange MakeRangeFromAbs(int a1,int a2)
 
 - (void) insertText: insertObjc
 {
-  NSRange selectedRange = [self selectedRange];
+  NSRange selectedRange = selected_range;
   int lineIndex = [self lineLayoutIndexForCharacterIndex: 
 			  selectedRange.location]; 
   int origLineIndex = lineIndex;
@@ -1986,7 +1999,7 @@ static NSRange MakeRangeFromAbs(int a1,int a2)
   
   if ([self isRichText])
     {
-      [self replaceRange: [self selectedRange]
+      [self replaceRange: selected_range
 	    withAttributedString: [insertObjc isKindOfClass: 
 						[NSAttributedString class]]? 
 	    insertObjc: 
@@ -1997,7 +2010,7 @@ static NSRange MakeRangeFromAbs(int a1,int a2)
     } 
   else
     {
-      [self replaceRange: [self selectedRange] withString: insertString];
+      [self replaceRange: selected_range withString: insertString];
     }
   redrawLineRange.length = [self rebuildLineLayoutInformationStartingAtLine: 
 				   redrawLineRange.location
@@ -2011,14 +2024,15 @@ static NSRange MakeRangeFromAbs(int a1,int a2)
   // move cursor <!> [self selectionRangeForProposedRange: ]
   [self 
     setSelectedRange: 
-      NSMakeRange ([self selectedRange].location + [insertString length], 0)];	
+      NSMakeRange (selected_range.location + [insertString length], 0)];
 
   // remember x for row - stable cursor movements
   currentCursorX = [self rectForCharacterIndex: 
-			   [self selectedRange].location].origin.x;		
+			   selected_range.location].origin.x;
+
   // remember x for row - stable cursor movements
   currentCursorY = [self rectForCharacterIndex: 
-			   [self selectedRange].location].origin.y;		
+			   selected_range.location].origin.y;
   
   redrawLineRange = NSIntersectionRange (redrawLineRange, 
 					 [self lineRangeForRect: 
@@ -2103,10 +2117,11 @@ static NSRange MakeRangeFromAbs(int a1,int a2)
   
   // remember x for row - stable cursor movements
   currentCursorX = [self rectForCharacterIndex: 
-			   [self selectedRange].location].origin.x;		
+			   selected_range.location].origin.x;		
+  
   // remember x for row - stable cursor movements
   currentCursorY = [self rectForCharacterIndex: 
-			   [self selectedRange].location].origin.y;		
+			   selected_range.location].origin.y;		
 
   redrawLineRange 
     = NSIntersectionRange (redrawLineRange, 
@@ -2206,8 +2221,20 @@ static NSRange MakeRangeFromAbs(int a1,int a2)
     case NSRightArrowFunctionKey:
       [self moveCursorRight: self];
       return;
+    case NSDeleteFunctionKey:
+      if (selected_range.location != [self textLength])
+	{
+	  /* Not at the end of text -- delete following character */
+	  [self deleteRange: 
+		  [self selectionRangeForProposedRange: 
+			  NSMakeRange (selected_range.location, 1)
+			granularity: NSSelectByCharacter]
+		backspace: NO];
+	  return;
+	}
+      /* end of text: behave the same way as NSBackspaceKey */
     case NSBackspaceKey: 
-      [self deleteRange: [self selectedRange] backspace: YES];
+      [self deleteRange: selected_range backspace: YES];
       return;
 #if 1
     case 0x6d: 	// end - key: debugging: enforce complete re - layout
@@ -2252,7 +2279,7 @@ static NSRange MakeRangeFromAbs(int a1,int a2)
 
   if ([self shouldDrawInsertionPoint])
     {
-      [self drawInsertionPointAtIndex: [self selectedRange].location 
+      [self drawInsertionPointAtIndex: selected_range.location 
 	    color: nil turnedOn: NO];
       
       //<!> stop timed entry
@@ -2278,7 +2305,7 @@ static NSRange MakeRangeFromAbs(int a1,int a2)
   //if ([self shouldDrawInsertionPoint])
   //  {
   //   [self lockFocus];
-  //   [self drawInsertionPointAtIndex: [self selectedRange].location 
+  //   [self drawInsertionPointAtIndex: selected_range.location 
   //      color: [NSColor blackColor] turnedOn: YES];
   //   [self unlockFocus];
   //   //<!> restart timed entry
@@ -3188,7 +3215,7 @@ _relocLayoutArray (NSMutableArray *lineLayoutInformation,
     return;
   
   [self drawRectNoSelection: rect];
-  [self drawSelectionAsRange: [self selectedRange]];
+  [self drawSelectionAsRange: selected_range];
 }
 
 // text lays out from top to bottom
@@ -3224,15 +3251,15 @@ _relocLayoutArray (NSMutableArray *lineLayoutInformation,
   
   [pboard declareTypes: types owner: self];
 
-  [pboard setString: [[self string] substringWithRange: [self selectedRange]] 
+  [pboard setString: [[self string] substringWithRange: selected_range] 
 	  forType: NSStringPboardType];
 
   if ([self isRichText])
-    [pboard setData: [self RTFFromRange: [self selectedRange]] 
+    [pboard setData: [self RTFFromRange: selected_range] 
 	    forType: NSRTFPboardType];
 
   if ([self importsGraphics])
-    [pboard setData: [self RTFDFromRange: [self selectedRange]] 
+    [pboard setData: [self RTFDFromRange: selected_range] 
 	    forType: NSRTFDPboardType];
 }
 
@@ -3248,11 +3275,11 @@ _relocLayoutArray (NSMutableArray *lineLayoutInformation,
 
 - (void) delete: sender
 {	
-  [self deleteRange: [self selectedRange] backspace: NO];
+  [self deleteRange: selected_range backspace: NO];
 }
 - (void) cut: sender
 {	
-  if ([self selectedRange].length)
+  if (selected_range.length)
     {
       [self copy: self];
       [self delete: self];
@@ -3344,7 +3371,7 @@ _relocLayoutArray (NSMutableArray *lineLayoutInformation,
   NSRange errorRange 
     = [[NSSpellChecker sharedSpellChecker] 
 	checkSpellingOfString: [self string] 
-	startingAt: NSMaxRange ([self selectedRange])];
+	startingAt: NSMaxRange (selected_range)];
 
   if (errorRange.length) 
     [self setSelectedRange: errorRange];
