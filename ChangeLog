@@ -1,3 +1,10 @@
+1999-09-04  Nicola Pero  <n.pero@mi.flashnet.it>
+
+	* Source/NSMenu.m: added missing method ([-_rightMouseDisplay]) 
+	with a void implementation.  In future, it should be given 
+	a complete implementation, or removed.  At present, the method 
+	is only called by NSResponder.
+
 1999-09-04  Michael Hanni   <mhanni@sprintmail.com>
 
 	* Model/GMAppKit.m: patch from Tim Bissell

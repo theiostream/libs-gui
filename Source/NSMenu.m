@@ -837,6 +837,12 @@ NSArray* array;
     }
 } 
 
+- (void) _rightMouseDisplay
+{
+  // TODO: implement this method 
+  ;
+}
+
 - (void) display
 {
     if (menu_changed)
