@@ -174,8 +174,10 @@ static SEL	invalidateSel = @selector(_invalidateCoordinates);
   bounds.origin = NSZeroPoint;		// Set bounds rectangle
   bounds.size = frame.size;
 
-  frameMatrix = [PSMatrix new];		// init PS matrix for
-  boundsMatrix = [PSMatrix new];	// frame and bounds
+  frameMatrix = [PSMatrix new];		// Map fromsuperview to frame
+  boundsMatrix = [PSMatrix new];	// Map fromsuperview to bounds
+  matrixToWindow = [PSMatrix new];	// Map to window coordinates
+  matrixFromWindow = [PSMatrix new];	// Map from window coordinates
   [frameMatrix setFrameOrigin: frame.origin];
 
   sub_views = [NSMutableArray new];
@@ -191,12 +193,15 @@ static SEL	invalidateSel = @selector(_invalidateCoordinates);
   post_frame_changes = NO;
   autoresize_subviews = YES;
   autoresizingMask = NSViewNotSizable;
+  coordinates_valid = NO;
 
   return self;
 }
 
 - (void) dealloc
 {
+  [matrixToWindow release];
+  [matrixFromWindow release];
   [frameMatrix release];
   [boundsMatrix release];
   [sub_views release];
@@ -629,54 +634,67 @@ static SEL	invalidateSel = @selector(_invalidateCoordinates);
 
   if (!aView)
     aView = [window contentView];
+  if (aView == self)
+    return aPoint;
+  NSAssert(window == [aView window], NSInvalidArgumentException);
 
-  if ([self isDescendantOf: aView])
-    {
-      NSMutableArray	*path;
+  matrix = [aView _matrixToWindow];
+  new = [matrix pointInMatrixSpace: aPoint];
 
-      path = [self _pathBetweenSubview: self toSuperview: aView];
-      [path addObject: aView];
-      matrix = [self _concatenateMatricesInReverseOrderFromPath: path];
-      [matrix inverse];
-      new = [matrix pointInMatrixSpace: aPoint];
-    }
-  else if ([aView isDescendantOf: self])
-    {
-      NSMutableArray	*path;
-
-      path = [self _pathBetweenSubview: aView toSuperview: self];
-      [path addObject: self];
-      matrix = [self _concatenateMatricesInReverseOrderFromPath: path];
-      new = [matrix pointInMatrixSpace: aPoint];
-    }
+  if (coordinates_valid)
+    matrix = matrixFromWindow;
   else
-    {
-      new = [aView convertPoint: aPoint toView: nil];
-      new = [self convertPoint: new fromView: nil];
-    }
+    matrix = [self _matrixFromWindow];
+  new = [matrix pointInMatrixSpace: new];
 
   return new;
 }
 
 - (NSPoint) convertPoint: (NSPoint)aPoint toView: (NSView*)aView
 {
+  NSPoint	new;
+  PSMatrix	*matrix;
+
   if (!aView)
     aView = [window contentView];
+  if (aView == self)
+    return aPoint;
+  NSAssert(window == [aView window], NSInvalidArgumentException);
 
-  return [aView convertPoint: aPoint fromView: self];
+  if (coordinates_valid)
+    matrix = matrixToWindow;
+  else
+    matrix = [self _matrixToWindow];
+  new = [matrix pointInMatrixSpace: aPoint];
+
+  matrix = [aView _matrixFromWindow];
+  new = [matrix pointInMatrixSpace: new];
+
+  return new;
 }
 
 - (NSRect) convertRect: (NSRect)aRect fromView: (NSView*)aView
 {
-  NSRect r;
+  PSMatrix	*matrix;
+  NSRect	r;
 
-  /* Must belong to the same window	*/
-  if (aView && window != [aView window])
-    return NSZeroRect;
+  if (!aView)
+    aView = [window contentView];
+  if (aView == self)
+    return aRect;
+  NSAssert(window == [aView window], NSInvalidArgumentException);
 
-  r = aRect;
-  r.origin = [self convertPoint: r.origin fromView: aView];
-  r.size = [self convertSize: r.size fromView: aView];
+  matrix = [aView _matrixToWindow];
+  r.origin = [matrix pointInMatrixSpace: aRect.origin];
+  r.size = [matrix sizeInMatrixSpace: aRect.size];
+
+  if (coordinates_valid)
+    matrix = matrixFromWindow;
+  else
+    matrix = [self _matrixFromWindow];
+  r.origin = [matrix pointInMatrixSpace: r.origin];
+  r.size = [matrix sizeInMatrixSpace: r.size];
+
   if ([aView isFlipped] != [self isFlipped])
     r.origin.y -= r.size.height;
 
@@ -685,15 +703,26 @@ static SEL	invalidateSel = @selector(_invalidateCoordinates);
 
 - (NSRect) convertRect: (NSRect)aRect toView: (NSView*)aView
 {
-  NSRect r;
+  PSMatrix	*matrix;
+  NSRect	r;
 
-  /* Must belong to the same window	*/
-  if (aView && window != [aView window])
-    return NSZeroRect;
+  if (!aView)
+    aView = [window contentView];
+  if (aView == self)
+    return aRect;
+  NSAssert(window == [aView window], NSInvalidArgumentException);
 
-  r = aRect;
-  r.origin = [self convertPoint: r.origin toView: aView];
-  r.size = [self convertSize: r.size toView: aView];
+  if (coordinates_valid)
+    matrix = matrixToWindow;
+  else
+    matrix = [self _matrixToWindow];
+  r.origin = [matrix pointInMatrixSpace: aRect.origin];
+  r.size = [matrix sizeInMatrixSpace: aRect.size];
+
+  matrix = [aView _matrixFromWindow];
+  r.origin = [matrix pointInMatrixSpace: r.origin];
+  r.size = [matrix sizeInMatrixSpace: r.size];
+
   if ([aView isFlipped] != [self isFlipped])
     r.origin.y -= r.size.height;
 
@@ -702,42 +731,48 @@ static SEL	invalidateSel = @selector(_invalidateCoordinates);
 
 - (NSSize) convertSize: (NSSize)aSize fromView: (NSView*)aView
 {
-  NSSize new;
-  PSMatrix* matrix;
+  NSSize	new;
+  PSMatrix	*matrix;
 
   if (!aView)
     aView = [window contentView];
+  if (aView == self)
+    return aSize;
+  NSAssert(window == [aView window], NSInvalidArgumentException);
 
-  if ([self isDescendantOf: aView])
-    {
-      NSArray* path = [self _pathBetweenSubview: self toSuperview: aView];
+  matrix = [aView _matrixToWindow];
+  new = [matrix sizeInMatrixSpace: aSize];
 
-      matrix = [self _concatenateBoundsMatricesInReverseOrderFromPath: path];
-      [matrix inverse];
-      new = [matrix sizeInMatrixSpace: aSize];
-    }
-  else if ([aView isDescendantOf: self])
-    {
-      NSArray* path = [self _pathBetweenSubview: aView toSuperview: self];
-
-      matrix = [self _concatenateBoundsMatricesInReverseOrderFromPath: path];
-      new = [matrix sizeInMatrixSpace: aSize];
-    }
+  if (coordinates_valid)
+    matrix = matrixFromWindow;
   else
-    {
-      new = [aView convertSize: aSize toView: nil];
-      new = [self convertSize: new fromView: nil];
-    }
+    matrix = [self _matrixFromWindow];
+  new = [matrix sizeInMatrixSpace: new];
 
   return new;
 }
 
 - (NSSize) convertSize: (NSSize)aSize toView: (NSView*)aView
 {
+  NSSize	new;
+  PSMatrix	*matrix;
+
   if (!aView)
     aView = [window contentView];
+  if (aView == self)
+    return aSize;
+  NSAssert(window == [aView window], NSInvalidArgumentException);
 
-  return [aView convertSize: aSize fromView: self];
+  if (coordinates_valid)
+    matrix = matrixToWindow;
+  else
+    matrix = [self _matrixToWindow];
+  new = [matrix sizeInMatrixSpace: aSize];
+
+  matrix = [aView _matrixFromWindow];
+  new = [matrix sizeInMatrixSpace: new];
+
+  return new;
 }
 
 - (void) setPostsFrameChangedNotifications: (BOOL)flag
@@ -1170,24 +1205,10 @@ static SEL	invalidateSel = @selector(_invalidateCoordinates);
 
 - (NSRect) visibleRect
 {
-  if (coordinates_valid)
-    return visibleRect;
-  if (!window)
-    visibleRect = NSZeroRect;
-  else if (!super_view)
-    visibleRect = bounds;
-  else
-    {
-      NSRect	superviewsVisibleRect;
-
-      superviewsVisibleRect = [self convertRect: [super_view visibleRect]
-				       fromView: super_view];
-
-      visibleRect = NSIntersectionRect(superviewsVisibleRect, bounds);
-      if (needs_display)
-	invalidRect = NSIntersectionRect(invalidRect, visibleRect);
-    }
-  coordinates_valid = YES;
+  if (coordinates_valid == NO)
+    [self _rebuildCoordinates];
+  if (needs_display)
+    invalidRect = NSIntersectionRect(invalidRect, visibleRect);
   return visibleRect;
 }
 
@@ -1764,68 +1785,15 @@ static SEL	invalidateSel = @selector(_invalidateCoordinates);
  *	Private methods.
  */
 
-- (NSRect) _boundingRectFor: (NSRect)rect
-{
-  NSRect new;
 
-  [frameMatrix boundingRectFor: rect result: &new];
-
-  return new;
-}
-
-- (PSMatrix*) _boundsMatrix
-{
-  return boundsMatrix;
-}
-
-- (PSMatrix*) _concatenateBoundsMatricesInReverseOrderFromPath: (NSArray*)viewsPath
-{
-  unsigned count = [viewsPath count];
-  PSMatrix* matrix = [[PSMatrix new] autorelease];
-
-  while (count > 0)
-    {
-      NSView* view = [viewsPath objectAtIndex: --count];
-
-      [matrix concatenateWith: view->boundsMatrix];
-    }
-
-  return matrix;
-}
-
-- (PSMatrix*) _concatenateMatricesInReverseOrderFromPath: (NSArray*)viewsPath
-{
-  PSMatrix	*matrix = [[PSMatrix new] autorelease];
-  unsigned	i = [viewsPath count];
-  NSView	*matrices[i];
-  NSView	*parent;
-  BOOL		wasFlipped;
-  BOOL		isFlipped;
-
-  if (i-- < 2)
-    return matrix;
-  [viewsPath getObjects: matrices];
-  parent = matrices[i];
-  wasFlipped = [parent isFlipped];
-  while (i-- > 0)
-    {
-      NSView	*view = matrices[i];
-
-      (*concatImp)(matrix, concatSel, view->frameMatrix);
-      isFlipped = [view isFlipped];
-      if (isFlipped != wasFlipped)
-	{
-	  flip->matrix[5] = view->bounds.size.height;
-	  (*concatImp)(matrix, concatSel, flip);
-	}
-      (*concatImp)(matrix, concatSel, view->boundsMatrix);
-      parent = view;
-      wasFlipped = isFlipped;
-    }
-
-  return matrix;
-}
-
+/*
+ *	The [-_invalidateCoordinates] method marks the coordinate mapping
+ *	matrices (matrixFromWindof and matrixToWindow) and the cached visible
+ *	rectangle as invalid.  It recursively invalidates the coordinates for
+ *	all subviews as well.
+ *	This method must be called whenever the size, shape or position of
+ *	the view is changed in any way.
+ */
 - (void) _invalidateCoordinates
 {
   if (coordinates_valid == YES)
@@ -1851,24 +1819,82 @@ static SEL	invalidateSel = @selector(_invalidateCoordinates);
     }
 }
 
-- (PSMatrix*) _frameMatrix
+/*
+ *	The [-_matrixFromWindow] method returns a matrix that can be used to
+ *	map coordinates in the windows coordinate system to coordinates in the
+ *	views coordinate system.  It rebuilds the mapping matrices and
+ *	visible rectangle cache if necessary.
+ *	All coordinate transformations use this matrix.
+ */
+- (PSMatrix*) _matrixFromWindow
 {
-  return frameMatrix;
+  if (coordinates_valid == NO)
+    [self _rebuildCoordinates];
+  return matrixFromWindow;
 }
 
-- (NSMutableArray*) _pathBetweenSubview: (NSView*)subview
-			    toSuperview: (NSView*)_superview
+/*
+ *	The [-_matrixToWindow] method returns a matrix that can be used to
+ *	map coordinates in the views coordinate system to coordinates in the
+ *	windows coordinate system.  It rebuilds the mapping matrices and
+ *	visible rectangle cache if necessary.
+ *	All coordinate transformations use this matrix.
+ */
+- (PSMatrix*) _matrixToWindow
 {
-  NSMutableArray	*array = [NSMutableArray array];
-  NSView		*view = subview;
+  if (coordinates_valid == NO)
+    [self _rebuildCoordinates];
+  return matrixToWindow;
+}
 
-  while (view && view != _superview)
+/*
+ *	The [-_rebuildCoordinates] method rebuilds the coordinate mapping
+ *	matrices (matrixFromWindof and matrixToWindow) and the cached visible
+ *	rectangle if they have been invalidated.
+ */
+- (void) _rebuildCoordinates
+{
+  if (coordinates_valid == NO)
     {
-      [array addObject: view];
-      view = view->super_view;
-    }
+      coordinates_valid = YES;
+      if (!window)
+	{
+	  visibleRect = NSZeroRect;
+	  [matrixToWindow makeIdentityMatrix];
+	  [matrixFromWindow makeIdentityMatrix];
+	}
+      if (!super_view)
+	{
+	  visibleRect = bounds;
+	  [matrixToWindow makeIdentityMatrix];
+	  [matrixFromWindow makeIdentityMatrix];
+	}
+      else
+	{
+	  NSRect	superviewsVisibleRect;
+	  BOOL		wasFlipped = [super_view isFlipped];
+	  float		vals[6];
+	  PSMatrix	*pMatrix = [super_view _matrixToWindow];
 
-  return array;
+	  [pMatrix getMatrix: vals];
+	  [matrixToWindow setMatrix: vals];
+	  (*concatImp)(matrixToWindow, concatSel, frameMatrix);
+	  if ([self isFlipped] != wasFlipped)
+	    {
+	      flip->matrix[5] = bounds.size.height;
+	      (*concatImp)(matrixToWindow, concatSel, flip);
+	    }
+	  (*concatImp)(matrixToWindow, concatSel, boundsMatrix);
+	  [matrixToWindow getMatrix: vals];
+	  [matrixFromWindow setMatrix: vals];
+	  [matrixFromWindow inverse];
+
+	  superviewsVisibleRect = [self convertRect: [super_view visibleRect]
+					   fromView: super_view];
+
+	  visibleRect = NSIntersectionRect(superviewsVisibleRect, bounds);
+	}
+    }
 }
 
 @end
