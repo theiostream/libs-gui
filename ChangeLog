@@ -3,6 +3,10 @@
 	* Version: 0.7.0
 	* Documentation/*: Update.
 
+	* configure.in: Check for tiff and jpeg and zlib with tiff
+	* config.make.in: Add ADDTIONAL_DEPENDS for libs
+	* Source/GNUmakefile.preamble: Use it.
+
 2001-07-05  Mirko Viviani  <mirko.viviani@rccr.cremona.it>
 
 	* Source/NSComboBoxCell.m ([NSComboBoxCell -initTextCell:]): use -1
