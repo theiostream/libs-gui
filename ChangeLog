@@ -1,3 +1,14 @@
+1999-09-07  Michael Hanni   <mhanni@sprintmail.com>
+
+        * Source/NSInterfaceStyle.m: added support for
+        GSWindowMakerInterfaceStyle.
+        * Headers/NSInterfaceStyle.h: added enum
+        GSWindowMakerInterfaceStyle.
+        * Source/NSMenu.m: implemented NSInterfaceStyle based window maker
+        like menus. i.e. they line up with the menu item selected.
+        try 'defaults write NSGlobalDomain NSMenuInterfaceStyle
+             GSWindowMakerInterfaceStyle'
+
 1999-09-05  Michael Hanni   <mhanni@sprintmail.com>
 
 	* Source/NSMenuView.m: fix nagging bug reported by Gregory John
