@@ -1,3 +1,7 @@
+1999-02-22  Adam Fedor  <fedor@gnu.org>
+
+	* Version: update version.
+
 Mon Feb 22  5:52:00 1999  Richard Frith-Macdonald <richard@brainstorm.co.uk>
 
 	* Source/NSView.m: ([-displayIfNeededInRectIgnoringOpacity:]) a two
