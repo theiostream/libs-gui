@@ -179,10 +179,12 @@ fill in all the information to show in the Info Panel.
 @noindent
 - (void) @b{orderFrontStandardInfoPanelWithOptions:} (NSDictionary *)@t{dictionary}
 
-Creates (if needed) a standard info panel for the application, taking 
-the needed information from the @t{dictionary} argument.  Standard info 
-panel are immutable and can not be changed after creation.  
-Useful keys for the @t{dictionary} are: 
+Orders front the standard info panel for the application, taking the
+needed information from the @t{dictionary} argument.  There is a single
+standard info panel per application; it is created the first time that
+this method is invoked, and then reused in all subsequent calls.  The 
+application standard info panel is immutable and can not be changed
+after creation.  Useful keys for the @t{dictionary} are:
 
 @code{ApplicationName}: A string with the name of the application (eg,
 @code{@@"Gorm"}).  If not available, the @file{Info-gnustep.plist} file is
@@ -1242,10 +1244,11 @@ argument was given.  The Info-gnustep.plist file could look like this:
 @chapter Special Setup Instructions.
 
 @menu
-* Keyboard Modifiers::          
+* Keyboard Modifiers::
+* Window Manager::
 @end menu
 
-@node Keyboard Modifiers,  , Setup, Setup
+@node Keyboard Modifiers, Window Manager, Setup, Setup
 @section Keyboard Modifiers
 
 This section applies only to the xgps and the xdps backend. 
@@ -1382,6 +1385,16 @@ with the window manager keyboard shortcuts.
 Good window managers let you change the keyboard shortcuts, 
 so you may move the wm shortcuts that you do not use to keys 
 which do not conflict (at least not too much) with GNUstep.  
+
+@node Window Manager,  , Keyboard Modifiers, Setup
+@section Window Manager Recommended Configuration
+
+If you are using GNUstep GUI library with the Window Maker window
+manager it is recommended that you set the Window Maker option "Input
+Focus Mouse" (under "Window Focus Preferences") to "Click Window To
+Focus".
+
+If you are using another window manager, look for a similar option.
 
 @node Contributing, Concept Index, Setup, Top
 @chapter Contributing
