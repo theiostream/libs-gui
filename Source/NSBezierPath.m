@@ -58,7 +58,7 @@ void subdiv(int degree, float coeff[], float t, float bleft[], float bright[]);
 NSPoint rotatePoint(NSPoint p, NSPoint centre, float angle);
 
 
-@interface PathElement : NSObject
+@interface PathElement : NSObject <NSCopying, NSCoding>
 {
 	NSPoint p[3];
 	NSBezierPathElement type;
@@ -138,6 +138,35 @@ NSPoint rotatePoint(NSPoint p, NSPoint centre, float angle);
 	PathElement *element = [[self alloc] init];
 	[element setPointAtIndex: 0 toPoint: NSMakePoint(0, 0)];
   	return AUTORELEASE(element);
+}
+
+- (id)copyWithZone:(NSZone*)zone
+{
+	PathElement *element = [[PathElement allocWithZone: zone] init];
+	element->type = type;
+	if(type == NSMoveToBezierPathElement || type == NSLineToBezierPathElement) {
+		element->p[0].x = p[0].x;
+		element->p[0].y = p[0].y;
+	} else if(type == NSCurveToBezierPathElement) {
+		element->p[0].x = p[0].x;
+		element->p[0].y = p[0].y;
+		element->p[1].x = p[1].x;
+		element->p[1].y = p[1].y;
+		element->p[2].x = p[2].x;
+		element->p[2].y = p[2].y;
+	}
+	return AUTORELEASE(element);
+}
+
+- (void)encodeWithCoder:(NSCoder*)aCoder
+{
+	[super encodeWithCoder: aCoder];
+}
+
+- (id)initWithCoder:(NSCoder*)aCoder
+{
+	[super initWithCoder: aCoder];
+	return self;
 }
 
 - (void)setType:(NSBezierPathElement)t
@@ -652,7 +681,8 @@ static Class NSBezierPath_concrete_class = nil;
 //
 - (id)copyWithZone:(NSZone*)zone
 {
-  	return self;
+	[self subclassResponsibility:_cmd];
+	return self;
 }
 
 @end
@@ -686,6 +716,9 @@ static Class NSBezierPath_concrete_class = nil;
 	if(self) {
 		pathElements = [[NSMutableArray alloc] initWithCapacity: 1];
 		subPaths = [[NSMutableArray alloc] initWithCapacity: 1];
+		[self setLineWidth: 1];
+		[self setLineCapStyle: NSButtLineCapStyle];
+		[self setLineJoinStyle: NSMiterLineJoinStyle];
 		[self setWindingRule: NSNonZeroWindingRule];
 		[self setBounds: NSZeroRect];
 		[self setControlPointBounds: NSZeroRect];
@@ -831,7 +864,6 @@ static Class NSBezierPath_concrete_class = nil;
 	PathElement *elm;
 	NSBezierPathElement t;
 	NSPoint *pts, origin;
-	float r, g, b, w;
 	int i;
 		
 	if(cachesBezierPath) {
@@ -842,12 +874,10 @@ static Class NSBezierPath_concrete_class = nil;
 			cacheimg = [[NSImage alloc] initWithSize: [self bounds].size];		
 			[self movePathToPoint: NSMakePoint(0, 0)];
 			
-			PScurrentrgbcolor(&r, &g, &b);
-			PScurrentlinewidth(&w);
-
 			[cacheimg lockFocus];
-			PSsetrgbcolor(r, g, b);
-			PSsetlinewidth(w);
+			PSsetlinewidth([self lineWidth]);
+			PSsetlinejoin([self lineJoinStyle]);
+			PSsetlinecap([self lineCapStyle]);
 			for(i = 0; i < [pathElements count]; i++) {
 				elm = [pathElements objectAtIndex: i];
 				pts = [elm points];
@@ -874,6 +904,9 @@ static Class NSBezierPath_concrete_class = nil;
 		}
 		[cacheimg compositeToPoint: origin operation: NSCompositeCopy];
 	} else {
+		PSsetlinewidth([self lineWidth]);
+		PSsetlinejoin([self lineJoinStyle]);
+		PSsetlinecap([self lineCapStyle]);
 		for(i = 0; i < [pathElements count]; i++) {
 			elm = [pathElements objectAtIndex: i];
 			pts = [elm points];
@@ -904,7 +937,6 @@ static Class NSBezierPath_concrete_class = nil;
 	PathElement *elm;
 	NSBezierPathElement t;
 	NSPoint *pts, origin;
-	float r, g, b;	
 	int i;
 
 	if(cachesBezierPath) {
@@ -914,10 +946,8 @@ static Class NSBezierPath_concrete_class = nil;
 				[cacheimg release];
 			cacheimg = [[NSImage alloc] initWithSize: [self bounds].size];		
 			[self movePathToPoint: NSMakePoint(0, 0)];
-			PScurrentrgbcolor(&r, &g, &b);
 			
 			[cacheimg lockFocus];
-			PSsetrgbcolor(r, g, b);
 			for(i = 0; i < [pathElements count]; i++) {
 				elm = [pathElements objectAtIndex: i];
 				pts = [elm points];
@@ -1259,6 +1289,27 @@ static Class NSBezierPath_concrete_class = nil;
 		[self calculateDraftPolygon];
 }
 
+//
+// NSCopying Protocol
+//
+- (id)copyWithZone:(NSZone*)zone
+{
+	GSBezierPath *path = [[GSBezierPath allocWithZone: zone] init];
+	
+	path->pathElements = [[pathElements copy] retain];
+	path->subPaths = [[subPaths copy] retain];
+	path->cachesBezierPath = cachesBezierPath;
+	if(cachesBezierPath && cacheimg)
+		path->cacheimg = [[cacheimg copy] retain];
+	[path setLineWidth: [self lineWidth]];
+	[path setLineCapStyle: [self lineCapStyle]];
+	[path setLineJoinStyle: [self lineJoinStyle]];
+	[path setWindingRule: [self windingRule]];
+	[path setBounds: [self bounds]];
+	[path setControlPointBounds: [self controlPointBounds]];
+
+	return path;
+}
 
 //
 // Private Methods 

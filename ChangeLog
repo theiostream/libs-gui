@@ -1,3 +1,7 @@
+Sun Feb 13 19:20:00 2000  Enrico Sersale  <enrico@imago.ro>
+
+	* Source/NSBezierPath.m: ([-copyWithZone:]) implemented.
+
 Sat Feb 12 21:16:00 2000  Nicola Pero  <n.pero@mi.flashnet.it>
 
 	* Source/NSBrowser.m ([-loadColumnZero]), ([-reloadColumn:]):
