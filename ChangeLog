@@ -1,3 +1,15 @@
+2000-02-07  Adam Fedor  <fedor@gnu.org>
+
+	* configure.in: Add check for rintf.
+	* Source/NSBrowser.m: Use rint i no rintf.
+
+	* Source/NSApplication.m: Convert NSDebugLog to NSDebugLLog for
+	various NSEvent debugs.
+
+	* Source/NSMenuItemCell.m ([NSMenuItemCell -calcSize]): Make
+ 	sure anImage exists before getting size (methods with nil receivers
+	returning structs segfaults on Solaris).
+
 Mon Feb  7 18:55:29 2000  Nicola Pero  <n.pero@mi.flashnet.it>
 
 	* Source/NSMatrix.m ([-mouseDown:]): Pass mouse down to super if

@@ -161,7 +161,9 @@ static NSImage	*arrowImageH = nil;
   // Image
   if ((anImage = [mcell_item image]) && _cell.image_position == NSNoImage)
     [self setImagePosition: NSImageLeft];
-  componentSize = [anImage size];
+  componentSize = NSMakeSize(0,0);
+  if (anImage)
+    componentSize = [anImage size];
   mcell_imageWidth = componentSize.width;
   if (componentSize.height > neededMenuItemHeight)
     neededMenuItemHeight = componentSize.height;

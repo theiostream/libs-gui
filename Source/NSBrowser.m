@@ -47,6 +47,10 @@
 #include <AppKit/NSTextFieldCell.h>
 #include <AppKit/PSOperators.h>
 
+#ifndef HAVE_RINTF
+#define rintf rint
+#endif
+
 #define NSBR_COLUMN_SEP 6
 #define NSBR_VOFFSET 3
 
