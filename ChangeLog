@@ -1,3 +1,12 @@
+2000-07-16  Adam Fedor  <fedor@gnu.org>
+
+	* GNUmakefile: Make PrinterTypes subdir.
+	* PrinterTypes/GNUmakefile: New file to install ppd files.
+	* PrinterTypes/GNUmakefile.postamble: Likewise.
+
+	* Source/NSPrinter.m (getFile): Use NSBundle methods.
+	(+printerTypes): Simplify with use of NSBundle methods.
+
 2000-07-14  Adam Fedor  <fedor@gnu.org>
 
 	* Source/NSApplication.m (-run): Do appIconInit
