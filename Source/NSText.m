@@ -433,7 +433,7 @@ static NSRange MakeRangeFromAbs(int a1,int a2)
   draws_background = YES;
   [self setBackgroundColor: [NSColor textBackgroundColor]];
   [self setTextColor: [NSColor textColor]];
-  default_font = [NSFont userFontOfSize: 12];
+  default_font = RETAIN([NSFont userFontOfSize: 12]);
 
   [self setSelectionWordGranularitySet:
     [NSCharacterSet characterSetWithCharactersInString: @" "]];	//[NSCharacterSet whitespaceCharacterSet]
@@ -2272,8 +2272,8 @@ NSLog(@"opti hook 2");
 	[aDecoder decodeValueOfObjCType: @encode(BOOL) at: &is_ruler_visible];
 	[aDecoder decodeValueOfObjCType: @encode(BOOL) at: &is_field_editor];
 	background_color = [aDecoder decodeObject];
-	text_color = [aDecoder decodeObject];
-	default_font=[aDecoder decodeObject];
+	text_color = RETAIN([aDecoder decodeObject]);
+	default_font = RETAIN([aDecoder decodeObject]);
 	[aDecoder decodeValueOfObjCType: @encode(NSRange) at: &selected_range];
 
 	return self;

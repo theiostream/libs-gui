@@ -323,10 +323,12 @@
 
 - (id) initWithCoder: (NSCoder*)aDecoder
 {
+  id aview;
   [super initWithCoder: aDecoder];
 
   [aDecoder decodeValueOfObjCType: @encode(id) at: &cell];
-  content_view = [aDecoder decodeObject];
+  aview = [aDecoder decodeObject];
+  [self setContentView: aview];
   offsets = [aDecoder decodeSize];
   border_rect = [aDecoder decodeRect];
   title_rect = [aDecoder decodeRect];

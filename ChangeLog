@@ -9,6 +9,14 @@
 	* Source/NSTextStorage.m: Likewise.
 	* Source/NSTextView.m: Likewise.
 
+	* Source/NSBox.m ([NSBox -initWithCoder:]): Remember to set the
+	content view.
+	* Source/NSFontPanel.m ([NSFontPanel -setPanelFont:isMultiple:]): 
+	ASSIGN panel_font (e.g. retain it).
+	(-initWithCoder:): Likewise.
+	* Source/NSText.m ([NSText -initWithFrame:]): Retain default_font.
+	(-initWithCoder:): Likewise.
+
 1999-09-07  Michael Hanni   <mhanni@sprintmail.com>
 
         * Source/NSInterfaceStyle.m: added support for
