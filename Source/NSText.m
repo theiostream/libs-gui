@@ -832,7 +832,7 @@ static NSRange MakeRangeFromAbs(int a1,int a2)
 	{	if (font)
 		{	[rtfContent addAttribute: NSFontAttributeName value: font range: range];
 			[self rebuildFromCharacterIndex: range.location];
-NSLog(@"did set font");
+NSDebugLLog(@"NSText", @"did set font");
 		}
 	} else {}
 }

@@ -374,7 +374,8 @@ fprintf(stderr, " TextField mouseDown --- ");
   unsigned int key_code = [theEvent keyCode];
   id nextResponder;
 
-  NSLog(@"NSTextField: -keyDown %s\n", [[theEvent characters] cString]);
+  NSDebugLLog(@"NSText", 
+    @"NSTextField: -keyDown %s\n", [[theEvent characters] cString]);
 
   // If TAB, SHIFT-TAB or RETURN key then make another text the first
   // responder. This depends on key.
