@@ -1612,19 +1612,27 @@ NSAssert([event retainCount] > 0, NSInternalInconsistencyException);
  * Showing Standard Panels
  */
 - (void) orderFrontColorPanel: sender
-{
+{ 
+  NSRunAlertPanel (NULL, @"Color Panel not implemented yet",
+		   @"OK", NULL, NULL);
 }
 
 - (void) orderFrontDataLinkPanel: sender
 {
+  NSRunAlertPanel (NULL, @"Data Link Panel not implemented yet",
+		   @"OK", NULL, NULL);
 }
 
 - (void) orderFrontHelpPanel: sender
 {
+  NSRunAlertPanel (NULL, @"Help Panel not implemented yet",
+		   @"OK", NULL, NULL)
 }
 
 - (void) runPageLayout: sender
 {
+  NSRunAlertPanel (NULL, @"Page Layout Panel not implemented yet",
+		   @"OK", NULL, NULL);
 }
 
 /*
