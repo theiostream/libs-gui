@@ -5,8 +5,9 @@ Mon Feb  7 03:06:36 2000  Nicola Pero  <n.pero@mi.flashnet.it>
 	* Source/NSMatrix.m ([-putCell:atRow:column:]): Fixed bug.  If we
 	are putting a new cell precisely in _selectedRow, _selectedColumn,
 	we have to update _selectedCell, otherwise it remains pointing to
-	the released cell!  ([-insertRow:withCells:]),
-	([-insertColumn:withCells:]): Idem.
+	the released cell!  ([-insertRow:withCells:]): Update _selectedRow 
+	if needed.  ([-insertColumn:withCells:]): Update _selectedColumn if 
+	needed.
 	
 Sun Feb  6  8:52:00 2000  Richard Frith-Macdonald <richard@brainstorm.co.uk>
 
