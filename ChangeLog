@@ -1,3 +1,9 @@
+2000-08-04  Adam Fedor  <fedor@gnu.org>
+
+	* Source/NSWorkspace.m ([_GSWorkspaceCenter -postNotification:]):
+	Add user default "GSLogWorkspaceTimeout" to log rather than raise
+	an exception during remote notification.
+
 2000-08-03  Adam Fedor  <fedor@gnu.org>
 
 	* Source/NSWindow.m (-setFrameFromString:): Don't set display flag

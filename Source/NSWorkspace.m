@@ -96,7 +96,16 @@ static NSString	*GSWorkspaceNotification = @"GSWorkspaceNotification";
   rem = [NSNotification notificationWithName: [aNotification name]
 				      object: GSWorkspaceNotification
 				    userInfo: [aNotification userInfo]];
-  [remote postNotification: rem];
+  NS_DURING
+    [remote postNotification: rem];
+  NS_HANDLER
+    NSUserDefaults *defs = [NSUserDefaults standardUserDefaults];
+    if ([defs boolForKey: @"GSLogWorkspaceTimeout"])
+      NSLog(@"NSWorkspace Caught exception %@: %@", 
+	    [localException name], [localException reason]);
+    else
+      [localException raise];
+  NS_ENDHANDLER
 }
 
 - (void) postNotificationName: (NSString*)name 
