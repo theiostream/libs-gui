@@ -766,6 +766,18 @@ void __dummy_GMAppKit_functionForLinking() {}
   [self setRepresentedObject:[unarchiver
 			       decodeObjectWithName:@"representedObject"]];
 
+#ifdef GNU_GUI_LIBRARY
+  /*
+   * Set submenu from target if not set
+   */
+  if ([NSStringFromSelector ([self action]) 
+      isEqualToString: @"submenuAction:"])
+    {
+      if ([self submenu] == nil)
+	[self setSubmenu: [self target]];
+    }
+#endif
+  
 #if 0
   NSLog (@"menu item %@: target = %@, isEnabled = %d",
 	[self title], [self target], [self isEnabled]);
