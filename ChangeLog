@@ -5,6 +5,9 @@
 
 	* Source/NSGraphicContext.m (+waitAllContexts): New method.
 
+	* Documentation/news.tmpl.texi: Update.
+	* Documentation/todo.tmpl.texi: Update.
+
 2000-07-16  Adam Fedor  <fedor@gnu.org>
 
 	* GNUmakefile: Make PrinterTypes subdir.

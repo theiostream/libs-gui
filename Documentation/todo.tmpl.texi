@@ -26,10 +26,11 @@ reasonably stable.
 @subsection Texts
 
 @itemize @bullet
-@item The NSText code is particularly complex to work on and it has not 
-improved much since 0.6.0.  Many bugs are know in the code -- it is 
-somewhat usable though.  We hope on a big improvement of this area 
-for next release.
+
+@item There have been a lot of improvements in the NSText code, but is 
+particularly complex. It is 
+somewhat usable though.  We hope to keep improving it.
+
 @end itemize
 
 @subsection Matrices
@@ -56,10 +57,8 @@ This restriction will hopefully be removed in next releases.
 @item There are problems with alpha composing.  To avoid these problems, 
 you may set manually the background color of your image when displaying it.
 
-@item Only TIFF images are supported in 0.6.5.  Support at least for PNG and 
-JPEG images is planned for next release.
-
-@item alpha drawing and compositing of graphics doesn't work.
+@item alpha drawing and compositing of graphics works, but only to a limited
+degree.
 
 @end itemize
 
@@ -76,16 +75,11 @@ The following classes are currently unimplemented or unfinished
 to such a degree to be unusable.
 
 @itemize @bullet
-@item NSColorPanel
 @item NSDataLink
-@item NSFontManager
-@item NSFontPanel
 @item NSHelpPanel
 @item NSLayoutManager
 @item NSPageLayout
 @item NSPrintPanel
 @item NSSecureTextField
 @item NSSpellChecker
-@item NSTableView
-@item NSTextView
 @end itemize
