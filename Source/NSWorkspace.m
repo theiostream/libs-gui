@@ -67,9 +67,9 @@ static NSDictionary		*extPreferences = nil;
 
 static NSString			*_rootPath = @"/";
 
-/*
- * Class methods
- */
+//
+// Class methods
+//
 + (void) initialize
 {
   if (self == [NSWorkspace class])
@@ -81,6 +81,7 @@ static NSString			*_rootPath = @"/";
       NSData		*data;
       NSDictionary	*dict;
 
+      // Initial version
       [self setVersion: 1];
 
       [gnustep_global_lock lock];
@@ -110,7 +111,7 @@ static NSString			*_rootPath = @"/";
        *	Load file extension preferences.
        */
       extPrefPath = [home stringByAppendingPathComponent: extPrefName];
-      RETAIN(extPrefPath);
+      [extPrefPath retain];
       if ([mgr isReadableFileAtPath: extPrefPath] == YES)
 	{
 	  data = [NSData dataWithContentsOfFile: extPrefPath];
@@ -118,7 +119,7 @@ static NSString			*_rootPath = @"/";
 	    {
 	      dict = [NSDeserializer deserializePropertyListFromData: data
 						   mutableContainers: NO];
-	      extPreferences = RETAIN(dict);
+	      extPreferences = [dict retain];
 	    }
 	}
 
@@ -126,7 +127,7 @@ static NSString			*_rootPath = @"/";
        *	Load cached application information.
        */
       appListPath = [home stringByAppendingPathComponent: appListName];
-      RETAIN(appListPath);
+      [appListPath retain];
       if ([mgr isReadableFileAtPath: appListPath] == YES)
 	{
 	  data = [NSData dataWithContentsOfFile: appListPath];
@@ -134,7 +135,7 @@ static NSString			*_rootPath = @"/";
 	    {
 	      dict = [NSDeserializer deserializePropertyListFromData: data
 						   mutableContainers: NO];
-	      applications = RETAIN(dict);
+	      applications = [dict retain];
 	    }
 	}
       [gnustep_global_lock unlock];
@@ -148,9 +149,9 @@ static NSString			*_rootPath = @"/";
   return nil;
 }
 
-/*
- * Creating a Workspace
- */
+//
+// Creating a Workspace
+//
 + (NSWorkspace *) sharedWorkspace
 {
   if (sharedWorkspace == nil)
@@ -182,25 +183,13 @@ extIconForApp(NSWorkspace *ws, NSString *appName, NSDictionary *typeInfo)
       if ([file isAbsolutePath] == NO)
 	{
 	  NSString	*path;
-	  NSString	*iconPath;
-	  NSBundle	*bundle;
 
 	  path = [ws fullPathForApplication: appName];
-	  bundle = [NSBundle bundleWithPath: path];
-	  iconPath = [bundle pathForImageResource: file];
-	  /*
-	   * If the icon is not in the Resources of the app, try looking
-	   * directly in the app wrapper.
-	   */
-	  if (iconPath == nil)
-	    {
-	      iconPath = [path stringByAppendingPathComponent: file];
-	    }
-	  file = iconPath;
+	  file = [path stringByAppendingPathComponent: file];
 	}
       if ([[NSFileManager defaultManager] isReadableFileAtPath: file] == YES)
 	{
-	  return AUTORELEASE([[NSImage alloc] initWithContentsOfFile: file]);
+	  return [[[NSImage alloc] initWithContentsOfFile: file] autorelease];
 	}
     }
   return nil;
@@ -224,8 +213,8 @@ extIconForApp(NSWorkspace *ws, NSString *appName, NSDictionary *typeInfo)
 
   if (image == nil)
     {
-      image = RETAIN([self _getImageWithName: @"Folder.tiff"
-				   alternate: @"common_Folder.tiff"]);
+      image = [[self _getImageWithName: @"Folder.tiff"
+			     alternate: @"common_Folder.tiff"] retain];
     }
 
   return image;
@@ -238,8 +227,8 @@ extIconForApp(NSWorkspace *ws, NSString *appName, NSDictionary *typeInfo)
 
   if (image == nil)
     {
-      image = RETAIN([self _getImageWithName: @"Unknown.tiff"
-				   alternate: @"common_Unknown.tiff"]);
+      image = [[self _getImageWithName: @"Unknown.tiff"
+			     alternate: @"common_Unknown.tiff"] retain];
     }
 
   return image;
@@ -252,8 +241,8 @@ extIconForApp(NSWorkspace *ws, NSString *appName, NSDictionary *typeInfo)
 
   if (image == nil)
     {
-      image = RETAIN([self _getImageWithName: @"Root_PC.tiff"
-				   alternate: @"common_Root_PC.tiff"]);
+      image = [[self _getImageWithName: @"Root_PC.tiff"
+			     alternate: @"common_Root_PC.tiff"] retain];
     }
 
   return image;
@@ -284,7 +273,7 @@ extIconForApp(NSWorkspace *ws, NSString *appName, NSDictionary *typeInfo)
       if (iconPath)
 	{
 	  icon = [[NSImage alloc] initWithContentsOfFile: iconPath];
-	  AUTORELEASE(icon);
+	  [icon autorelease];
 	}
 
       if (icon == nil && (extInfo = [self infoForExtension: ext]) != nil)
@@ -326,6 +315,10 @@ extIconForApp(NSWorkspace *ws, NSString *appName, NSDictionary *typeInfo)
 		  icon = extIconForApp(self, appName, typeInfo);
 		}
 	    }
+	}
+
+      if (icon == nil)
+	{
 	}
 
       /*
@@ -465,9 +458,9 @@ extIconForApp(NSWorkspace *ws, NSString *appName, NSDictionary *typeInfo)
 }
 
 
-/*
- * Instance methods
- */
+//
+// Instance methods
+//
 - (void) dealloc
 {
   [NSException raise: NSInvalidArgumentException
@@ -481,9 +474,9 @@ extIconForApp(NSWorkspace *ws, NSString *appName, NSDictionary *typeInfo)
   return nil;
 }
 
-/*
- * Opening Files
- */
+//
+// Opening Files
+//
 - (BOOL) openFile: (NSString *)fullPath
 {
   NSString      *ext = [fullPath pathExtension];
@@ -521,7 +514,7 @@ extIconForApp(NSWorkspace *ws, NSString *appName, NSDictionary *typeInfo)
     andDeactivate: (BOOL)flag
 {
   NSString      *port = [appName stringByDeletingPathExtension];
-  id            app = nil;
+  id            app;
 
   /*
    *	Try to contact a running application.
@@ -567,9 +560,9 @@ extIconForApp(NSWorkspace *ws, NSString *appName, NSDictionary *typeInfo)
       NS_DURING
 	{
 	  if (flag == NO)
-	    [app application: NSApp openFileWithoutUI: fullPath];
+	    [app application: nil openFileWithoutUI: fullPath];
 	  else
-	    [app application: NSApp openFile: fullPath];
+	    [app application: nil openFile: fullPath];
 	}
       NS_HANDLER
 	{
@@ -593,9 +586,9 @@ extIconForApp(NSWorkspace *ws, NSString *appName, NSDictionary *typeInfo)
   return NO;
 }
 
-/*
- * Manipulating Files	
- */
+//
+// Manipulating Files	
+//
 - (BOOL) performFileOperation: (NSString *)operation
 		       source: (NSString *)source
 		  destination: (NSString *)destination
@@ -611,9 +604,9 @@ inFileViewerRootedAtPath: (NSString *)rootFullpath
   return NO;
 }
 
-/*
- * Requesting Information about Files
- */
+//
+// Requesting Information about Files
+//
 - (NSString *) fullPathForApplication: (NSString *)appName
 {
   NSString      *last = [appName lastPathComponent];
@@ -654,15 +647,12 @@ inFileViewerRootedAtPath: (NSString *)rootFullpath
 - (NSImage *) iconForFile: (NSString *)aPath
 {
   NSImage	*image = nil;
+  BOOL		isDir = NO;
   NSString	*iconPath = nil;
   NSString	*pathExtension = [[aPath pathExtension] lowercaseString];
   NSFileManager	*mgr = [NSFileManager defaultManager];
-  NSDictionary	*attributes;
-  NSString	*fileType;
 
-  attributes = [mgr fileAttributesAtPath: aPath traverseLink: YES];
-  fileType = [attributes objectForKey: NSFileType];
-  if ([fileType isEqual: NSFileTypeDirectory] == YES)
+  if ([mgr fileExistsAtPath: aPath isDirectory: &isDir] && isDir)
     {
       if ([pathExtension isEqualToString: @"app"]
 	|| [pathExtension isEqualToString: @"debug"]
@@ -674,26 +664,12 @@ inFileViewerRootedAtPath: (NSString *)rootFullpath
 	  iconPath = [[bundle infoDictionary] objectForKey: @"NSIcon"];
 	  if (iconPath && [iconPath isAbsolutePath] == NO)
 	    {
-	      NSString	*file = iconPath;
-
-	      iconPath = [bundle pathForImageResource: file];
-
-	      /*
-	       * If there is no icon in the Resources of the app, try
-	       * looking directly in the app wrapper.
-	       */
-	      if (iconPath == nil)
-		{
-		  iconPath = [aPath stringByAppendingPathComponent: file];
-		  if ([mgr isReadableFileAtPath: iconPath] == NO)
-		    {
-		      iconPath = nil;
-		    }
-		}
+	      iconPath = [aPath stringByAppendingPathComponent: iconPath];
 	    }
 	  /*
 	   *	If there is no icon specified in the Info.plist for app
-	   *	try 'wrapper/app.tiff'
+	   *	try 'wrapper/app.tiff' and 'wrapper/.dir.tiff' as
+	   *	possible locations for the application icon.
 	   */
 	  if (iconPath == nil)
 	    {
@@ -704,48 +680,39 @@ inFileViewerRootedAtPath: (NSString *)rootFullpath
 	      iconPath = [iconPath stringByAppendingPathExtension: @"tiff"];
 	      if ([mgr isReadableFileAtPath: iconPath] == NO)
 		{
-		  iconPath = nil;
+		  str = @".dir.tiff";
+		  iconPath = [aPath stringByAppendingPathComponent: str];
+		  if ([mgr isReadableFileAtPath: iconPath] == NO)
+		    iconPath = nil;
 		}
 	    }
-	}
 
-      /*
-       *	If we have no iconPath, try 'dir/.dir.tiff' as a
-       *	possible locations for the directory icon.
-       */
-      if (iconPath == nil)
-	{
-	  iconPath = [aPath stringByAppendingPathComponent: @".dir.tiff"];
-	  if ([mgr isReadableFileAtPath: iconPath] == NO)
+	  if (iconPath)
 	    {
-	      iconPath = nil;
+	      NS_DURING
+		{
+		  image = [[NSImage alloc] initWithContentsOfFile: iconPath];
+		  [image autorelease];
+		}
+	      NS_HANDLER
+		{
+		  NSLog(@"BAD TIFF FILE '%@'", iconPath);
+		}
+	      NS_ENDHANDLER
 	    }
-	}
-
-      if (iconPath != nil)
-	{
-	  NS_DURING
-	    {
-	      image = [[NSImage alloc] initWithContentsOfFile: iconPath];
-	      AUTORELEASE(image);
-	    }
-	  NS_HANDLER
-	    {
-	      NSLog(@"BAD TIFF FILE '%@'", iconPath);
-	    }
-	  NS_ENDHANDLER
 	}
 
       if (image == nil)
 	{
 	  image = [self _iconForExtension: pathExtension];
-	  if (image == nil || image == [self unknownFiletypeImage])
-	    {
-	      if ([aPath isEqual: _rootPath])
-		image = [self rootImage];
-	      else
-		image = [self folderImage];
-	    }
+	}
+
+      if (image == nil)
+	{
+	  if ([aPath isEqual: _rootPath])
+	    image = [self rootImage];
+	  else
+	    image= [self folderImage];
 	}
     }
   else
@@ -780,9 +747,9 @@ inFileViewerRootedAtPath: (NSString *)rootFullpath
   return nil;
 }
 
-/*
- * Tracking Changes to the File System
- */
+//
+// Tracking Changes to the File System
+//
 - (BOOL) fileSystemChanged
 {
   return NO;
@@ -792,9 +759,9 @@ inFileViewerRootedAtPath: (NSString *)rootFullpath
 {
 }
 
-/*
- * Updating Registered Services and File Types
- */
+//
+// Updating Registered Services and File Types
+//
 - (void) findApplications
 {
   static NSString	*path = nil;
@@ -841,9 +808,9 @@ inFileViewerRootedAtPath: (NSString *)rootFullpath
   [iconMap removeAllObjects];
 }
 
-/*
- * Launching and Manipulating Applications	
- */
+//
+// Launching and Manipulating Applications	
+//
 - (void) hideOtherApplications
 {
 }
@@ -869,17 +836,17 @@ inFileViewerRootedAtPath: (NSString *)rootFullpath
   return YES;
 }
 
-/*
- * Unmounting a Device	
- */
+//
+// Unmounting a Device	
+//
 - (BOOL) unmountAndEjectDeviceAtPath: (NSString *)path
 {
   return NO;
 }
 
-/*
- * Tracking Status Changes for Devices
- */
+//
+// Tracking Status Changes for Devices
+//
 - (void) checkForRemovableMedia
 {
 }
@@ -894,42 +861,42 @@ inFileViewerRootedAtPath: (NSString *)rootFullpath
   return nil;
 }
 
-/*
- * Notification Center
- */
+//
+// Notification Center
+//
 - (NSNotificationCenter *) notificationCenter
 {
   return workspaceCenter;
 }
 
-/*
- * Tracking Changes to the User Defaults Database
- */
+//
+// Tracking Changes to the User Defaults Database
+//
 - (void) noteUserDefaultsChanged
 {
   userDefaultsChanged = YES;
+  
 }
 
 - (BOOL) userDefaultsChanged
 {
   BOOL	hasChanged = userDefaultsChanged;
-
   userDefaultsChanged = NO;
   return hasChanged;
 }
 
-/*
- * Animating an Image	
- */
+//
+// Animating an Image	
+//
 - (void) slideImage: (NSImage *)image
 	       from: (NSPoint)fromPoint
 		 to: (NSPoint)toPoint
 {
 }
 
-/*
- * Requesting Additional Time before Power Off or Logout
- */
+//
+// Requesting Additional Time before Power Off or Logout
+//
 - (int) extendPowerOffBy: (int)requested
 {
   return 0;
@@ -955,9 +922,7 @@ inFileViewerRootedAtPath: (NSString *)rootFullpath
 	    {
 	      appName = [inf objectForKey: @"Editor"];
 	      if (appName == nil)
-		{
-		  appName = [inf objectForKey: @"Viewer"];
-		}
+		appName = [inf objectForKey: @"Viewer"];
 	    }
 	  else
 	    {
@@ -978,9 +943,7 @@ inFileViewerRootedAtPath: (NSString *)rootFullpath
 
       inf = [extPreferences objectForKey: [ext lowercaseString]];
       if (inf != nil)
-	{
-	  iconPath = [inf objectForKey: @"Icon"];
-	}
+	iconPath = [inf objectForKey: @"Icon"];
     }
   return iconPath;
 }
@@ -997,21 +960,18 @@ inFileViewerRootedAtPath: (NSString *)rootFullpath
    *    the dictionary of applications that can handle our file.
    */
   if (applications == nil)
-    {
-      [self findApplications];
-    }
+    [self findApplications];
   map = [applications objectForKey: @"GSExtensionsMap"];
   return [map objectForKey: ext];
 }
 
-- (NSBundle*) bundleForApp: (NSString *)appName
+- (NSBundle *)bundleForApp:(NSString *)appName
 {
   NSString	*path;
 
   if (appName == nil)
-    {
-      return nil;
-    }
+    return nil;
+
   path = appName;
   appName = [path lastPathComponent];
   if ([appName isEqual: path])
@@ -1029,81 +989,61 @@ inFileViewerRootedAtPath: (NSString *)rootFullpath
     }
 
   if (path == nil)
-    {
-      return nil;
-    }
+    return nil;
 
   return [NSBundle bundleWithPath: path];
 }
 
-/*
- * Returns the application icon for the given app.
+/** Returns the application icon for the given app.
  * Or null if none defined or appName is not a valid application name.
  */
-- (NSImage*) appIconForApp: (NSString *)appName
+- (NSImage *)appIconForApp:(NSString *)appName
 {
-  NSBundle	*bundle = [self bundleForApp:appName];
-  NSString	*iconPath;
+  NSBundle *bundle = [self bundleForApp:appName];
+  NSImage *appImage;
+  NSString *iconPath;
 
   if (bundle == nil)
-    {
-      return nil;
-    }
+	return nil;
+
   iconPath = [[bundle infoDictionary] objectForKey: @"NSIcon"];
 
   if (![iconPath isAbsolutePath])
-    {
-      iconPath = [[bundle bundlePath] stringByAppendingPathComponent: iconPath];
-    }
+  {
+	iconPath = [[bundle bundlePath] stringByAppendingPathComponent:iconPath];
+  }
   
-  return AUTORELEASE([[NSImage alloc] initWithContentsOfFile: iconPath]);
+  return [[NSImage alloc] initWithContentsOfFile:iconPath];
 }
 
-/*
- * Requires the path to an application wrapper as an argument.
- */
 - (NSString*) locateApplicationBinary: (NSString*)appName
 {
   NSString	*path;
   NSString	*file;
-  NSBundle	*bundle = [self bundleForApp: appName];
+  NSBundle	*bundle = [self bundleForApp:appName];;
 
   if (bundle == nil)
-    {
-      return nil;
-    }
+    return nil;
+
   path = [bundle bundlePath];
   file = [[bundle infoDictionary] objectForKey: @"NSExecutable"];
 
-  if (file == nil)
+  if (file != nil)
     {
-      /*
-       * If there is no executable specified in the info property-list, then
-       * we expect the executable to reside within the app wrapper and to
-       * have the same name as the app wrapper but without the extension.
-       */
-      file = [path lastPathComponent];
-      file = [file stringByDeletingPathExtension];
-      path = [path stringByAppendingPathComponent: file];
-    }
-  else
-    {
-      /*
-       * If there is an executable specified in the info property-list, then
-       * it can be either an absolute path, or a path relative to the app
-       * wrapper, so we make sure we end up with an absolute path to return.
-       */
-      if ([file isAbsolutePath] == YES)
+      NSString	*exepath;
+
+      appName = [file lastPathComponent];
+      exepath = [file stringByDeletingLastPathComponent];
+      if ([exepath isEqualToString: @""] == NO)
 	{
-	  path = file;
-	}
-      else
-	{
-	  path = [path stringByAppendingFormat: @"/%@", file];
+	  if ([file isAbsolutePath] == YES)
+	    path = exepath;
+	  else
+	    path = [path stringByAppendingPathComponent: exepath];
 	}
     }
 
-  return path;
+  return [path stringByAppendingPathComponent: appName];
 }
 
 - (void) setBestApp: (NSString*)appName
@@ -1131,12 +1071,11 @@ inFileViewerRootedAtPath: (NSString *)rootFullpath
 	{
 	  NSString	*iconPath = [inf objectForKey: @"Icon"];
 
-	  RETAIN(iconPath);
+	  [iconPath retain];
 	  [inf removeAllObjects];
 	  if (iconPath)
 	    {
 	      [inf setObject: iconPath forKey: @"Icon"];
-	      RELEASE(iconPath);
 	    }
 	}
       else
@@ -1149,8 +1088,8 @@ inFileViewerRootedAtPath: (NSString *)rootFullpath
       [inf setObject: appName forKey: (role ? role : @"Editor")];
     }
   [map setObject: inf forKey: ext];
-  RELEASE(inf);
-  RELEASE(extPreferences);
+  [inf release];
+  [extPreferences release];
   extPreferences = inf;
   data = [NSSerializer serializePropertyList: extPreferences];
   [data writeToFile: extPrefPath atomically: YES];
@@ -1176,8 +1115,8 @@ inFileViewerRootedAtPath: (NSString *)rootFullpath
   else
     [inf removeObjectForKey: @"Icon"];
   [map setObject: inf forKey: ext];
-  RELEASE(inf);
-  RELEASE(extPreferences);
+  [inf release];
+  [extPreferences release];
   extPreferences = inf;
   data = [NSSerializer serializePropertyList: extPreferences];
   [data writeToFile: extPrefPath atomically: YES];
