@@ -339,7 +339,7 @@ _new_label (NSString *value)
   [iconButton setImagePosition: NSImageOnly];
 
   nameLabel = _new_label (name);
-  [nameLabel setFont: [NSFont fontWithName: @"Helvetica-BoldOblique"
+  [nameLabel setFont: [NSFont fontWithName: @"Helvetica-Bold"//Oblique"
 			      size: 32]];
   [nameLabel sizeToFit];
   // Workaround for a bug somewhere in NSFont with italic fonts
@@ -351,7 +351,7 @@ _new_label (NSString *value)
     {
       descriptionLabel = _new_label (description);
       [descriptionLabel setFont: [NSFont fontWithName: 
-					   @"Helvetica-BoldOblique"
+					   @"Helvetica-Bold"//Oblique"
 					 size: 14]];
       [descriptionLabel sizeToFit];
       // Workaround for bug somewhere in NSFont with italic fonts
