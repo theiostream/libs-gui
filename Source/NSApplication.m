@@ -257,6 +257,12 @@ static NSCell* tileCell = nil;
   /* If the global application does not yet exist then create it */
   if (!NSApp)
     {
+      /* Initialize the backend here. This is equivalent to connecting to
+	 our window server, so if someone wants to query information that might
+	 require the backend, they just need to instantiate a sharedApplication
+      */
+      initialize_gnustep_backend();
+
       /*
        * Don't combine the following two statements into one to avoid
        * problems with some classes' initialization code that tries

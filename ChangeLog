@@ -1,3 +1,10 @@
+2000-07-19  Adam Fedor  <fedor@gnu.org>
+
+	* Source/NSApplication.m (+sharedApplication): Initialize
+	backend here instead of NSApplicationMain().
+
+	* Source/NSGraphicContext.m (+waitAllContexts): New method.
+
 2000-07-16  Adam Fedor  <fedor@gnu.org>
 
 	* GNUmakefile: Make PrinterTypes subdir.
@@ -10,7 +17,7 @@
 2000-07-14  Adam Fedor  <fedor@gnu.org>
 
 	* Source/NSApplication.m (-run): Do appIconInit
-	here so NSApp can be set-up without initializing backend.
+	here so NSApp can be set-up without showing icon.
 
 2000-07-06 Richard Frith-Macdonald <rfm@gnu.org>
 

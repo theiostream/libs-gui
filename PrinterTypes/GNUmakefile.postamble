@@ -53,6 +53,9 @@ after-install::
 	for dirs in $(RESOURCE_DIRS); do \
 	  cp $$dirs/*ppd $(INSTALL_DIR)/$$dirs/ ; \
 	done
+	for file in $(RESOURCE_FILES); do \
+	  $(INSTALL_DATA) $$file $(INSTALL_DIR) ; \
+	done
 
 # Things to do before uninstalling
 # before-uninstall::
