@@ -1,3 +1,9 @@
+Sun Aug  6 18:43:13 2000  Nicola Pero  <nicola@brainstorm.co.uk>
+
+	* Source/NSBrowser.m ([NSBrowser -doClick:]): Removed safety check
+	which was preventing subclasses of NSBrowserCell to work properly 
+	with a browser.
+
 Sat Aug  5 02:03:24 2000  Nicola Pero  <nicola@brainstorm.co.uk>
 
 	* Source/NSTextFieldCell.m ([NSTextFieldCell -initTextCell:]):
