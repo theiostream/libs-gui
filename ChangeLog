@@ -1,3 +1,16 @@
+Wed Feb  2 06:56:33 2000  Nicola Pero  <n.pero@mi.flashnet.it>
+
+	With a hack the library is now able to pop up popupbuttons in the
+	right position, correcting at run time bugs in the window frame
+	code.  This was hard.
+	* Source/NSPopUpButtonCell.m (_convertBaseToScreen_with_fix):
+	Added private function to do the conversion right, automatically
+	fixing window frame origin bugs.
+	* Source/NSPopUpButtonCell.m ([-attachPopUpWithFrame:inView:]):
+	Use the above mentioned function to perform the coordinate
+	conversion right.
+	* Source/NSPopUpButton.m ([-mouseDown:]): Idem.	
+
 Tue Feb  1 00:46:42 2000  Nicola Pero  <n.pero@mi.flashnet.it>
 
 	* Headers/AppKit/NSMenuItem.h: Removed unused ivar mi_hasSubmenu.
