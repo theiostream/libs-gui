@@ -12,15 +12,9 @@
 @subsection Windows
 
 @itemize @bullet
-@item Code to manage window decorations is not finished.  
-The reported frame origin of a window might be wrong. 
+@item Getting and releasing keyboard focus is still buggy. This is mostly
+annoying for users trying to type in a GNUstep or non-GNUstep window.
 
-@item Windows never get released.  Setting isReleasedWhenClosed 
-does not work.
-
-Fixing these bugs requires touching delicate parts of the library.
-This is why fixing them has been postponed after 0.6.5, to keep 0.6.5
-reasonably stable.
 @end itemize
 
 @subsection Texts

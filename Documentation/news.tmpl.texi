@@ -35,6 +35,10 @@ backend is still considered experimental and you may have to deal with
 many problems in order to get it working. We recommend sticking with the
 xgps backend (the default) for now.
 
+@c ====================================================================
+@c Keep the next line just below the list of changes in most recent version.
+@ifclear ANNOUNCE-ONLY
+
 @section Noteworthy changes in version @samp{0.6.5}
 
 Many of the basic GUI classes have been vastly improved or rewritten, thanks
@@ -149,10 +153,6 @@ tracking the mouse.
 Several cleanups and as usual, many bug fixes. 
 
 @end itemize
-
-@c ====================================================================
-@c Keep the next line just below the list of changes in most recent version.
-@ifclear ANNOUNCE-ONLY
 
 @section Noteworthy changes in version @samp{0.3.0}
 
