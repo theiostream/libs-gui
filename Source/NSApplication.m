@@ -1103,6 +1103,9 @@ NSAssert([event retainCount] > 0, NSInternalInconsistencyException);
 
   ASSIGN(main_menu, aMenu);
 
+  [aMenu setTitle:
+    [[[NSProcessInfo processInfo] processName] lastPathComponent]];
+  [aMenu sizeToFit];
   /*
    * Find a menucell with the title Windows this is the default windows menu
    */
