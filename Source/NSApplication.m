@@ -1637,7 +1637,7 @@ NSAssert([event retainCount] > 0, NSInternalInconsistencyException);
 		   @"OK", NULL, NULL);
 }
 
-/* infoPanel, macosx API -- 'About' in the title */
+/* infoPanel, macosx API -- Deprecated */
 - (void) orderFrontStandardAboutPanel: sender
 {
   [self orderFrontStandardAboutPanel: sender];
@@ -1645,14 +1645,10 @@ NSAssert([event retainCount] > 0, NSInternalInconsistencyException);
 
 - (void) orderFrontStandardAboutPanelWithOptions: (NSDictionary *)options
 {
-  if (_infoPanel == nil)
-    _infoPanel = [[GSInfoPanel alloc] initWithDictionary: options];
-  
-  [_infoPanel setTitle: @"About"];
-  [_infoPanel orderFront: self];
+  [self orderFrontStandardInfoPanelWithOptions: options];
 }
 
-/* infoPanel, GNUstep API -- 'Info' in the title */
+/* infoPanel, GNUstep API */
 - (void) orderFrontStandardInfoPanel: sender
 {
   [self orderFrontStandardInfoPanelWithOptions: nil];
