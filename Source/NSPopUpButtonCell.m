@@ -37,10 +37,10 @@
 #include <AppKit/PSOperators.h>
 
 @interface NSMenuItemCell (GNUStepPrivate)
--(void)setBelongsToPopUpButton: (BOOL)flag;
+- (void) setBelongsToPopUpButton: (BOOL)flag;
 @end
 @implementation NSMenuItemCell (GNUStepPrivate)
--(void)setBelongsToPopUpButton: (BOOL)flag
+- (void) setBelongsToPopUpButton: (BOOL)flag
 {
   _mcell_belongs_to_popupbutton = flag;
 }
@@ -54,7 +54,7 @@
    Looking if mouse is upper or lower than the given frame we determine 
    if decoration window size need to be added or subtracted. */
 NSPoint 
-_convertBaseToScreen_with_fix (NSRect frame, NSWindow *window, NSPoint point)
+_convertBaseToScreen_with_fix(NSRect frame, NSWindow *window, NSPoint point)
 {
   /* We get mouse position */
   NSPoint mouse = [window mouseLocationOutsideOfEventStream]; 

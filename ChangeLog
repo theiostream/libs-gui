@@ -1,6 +1,13 @@
+Sat Feb 12 17:53:00 2000  Richard Frith-Macdonald <richard@brainstorm.co.uk>
+
+	* Source/NSMenu.m: Replace non-working archiving code with drastically
+	simplified code that does work in the normal case, but doesn't deal
+	with non-standard menu representations.  This lets Gorm work with menus.
+	* Source/NSMenuItem.m: Don't archive parent menu.
+
 Fri Feb 11 20:18:10 2000  Enrico Sersale  <enrico@imago.ro>
 
-   * Source/NSBezierPath.m: ([-transformUsingAffineTransform:]) implemented.
+	* Source/NSBezierPath.m: ([-transformUsingAffineTransform:]) implement.
 	
 2000-02-09  Adam Fedor  <fedor@gnu.org>
 
