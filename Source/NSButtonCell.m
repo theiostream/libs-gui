@@ -683,7 +683,7 @@
     case NSImageBelow: 
     case NSImageAbove: 
       if (imageSize.width > titleSize.width)
-	s.height = imageSize.width;
+	s.width = imageSize.width;
       else 
 	s.width = titleSize.width;
       s.height = imageSize.height + titleSize.height; // + yDist ??
@@ -720,7 +720,7 @@
   // Add border size
   s.width += 2 * borderSize.width;
   s.height += 2 * borderSize.height;
-  
+
   return s;
 }
 
