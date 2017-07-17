@@ -155,8 +155,17 @@ extern NSString *NSSpeechDictionaryEntryPhonemes;
 - (NSString *) phonemesFromText: (NSString *)text;
 @end
 
+@protocol NSSpeechSynthesizerDelegate <NSObject>
+@optional
+- (void)speechSynthesizer:(NSSpeechSynthesizer *)sender didFinishSpeaking:(BOOL)finishedSpeaking;
+- (void)speechSynthesizer:(NSSpeechSynthesizer *)sender willSpeakWord:(NSRange)characterRange ofString:(NSString *)string;
+- (void)speechSynthesizer:(NSSpeechSynthesizer *)sender willSpeakPhoneme:(short)phonemeOpcode;
+- (void)speechSynthesizer:(NSSpeechSynthesizer *)sender didEncounterErrorAtIndex:(NSUInteger)characterIndex ofString:(NSString *)string message:(NSString *)message;
+- (void)speechSynthesizer:(NSSpeechSynthesizer *)sender didEncounterSyncMessage:(NSString *)message;
+@end
+
 // Speech synthesizer delegate informal protocol...
-@interface NSObject (NSSpeechSynthesizerDelegate)
+/*@interface NSObject (NSSpeechSynthesizerDelegate)
 - (void)speechSynthesizer: (NSSpeechSynthesizer *)sender
  didEncounterErrorAtIndex: (NSUInteger)index 
                  ofString: (NSString *)string 
@@ -174,6 +183,6 @@ extern NSString *NSSpeechDictionaryEntryPhonemes;
 - (void) speechSynthesizer: (NSSpeechSynthesizer *)sender 
              willSpeakWord: (NSRange)range 
                   ofString: (NSString *)string;
-@end
+@end*/
 
 #endif // _GNUstep_H_NSSpeechSynthesizer
