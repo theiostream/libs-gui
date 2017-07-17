@@ -64,6 +64,10 @@ extern NSString *NSSpeechModePhoneme;
 extern NSString *NSSpeechModeNormal;
 extern NSString *NSSpeechModeLiteral;
 
+extern NSString * const NSSpeechResetProperty;
+extern NSString * const NSSpeechOutputToFileURLProperty;
+extern NSString * const NSSpeechPitchBaseProperty;
+
 // values for speech status...
 extern NSString *NSSpeechStatusOutputBusy;
 extern NSString *NSSpeechStatusOutputPaused;
