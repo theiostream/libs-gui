@@ -125,6 +125,8 @@
 - (NSTextFieldBezelStyle)bezelStyle;
 #endif 
 
+- (NSSize)sizeThatFits:(NSSize)rect;
+
 @end
 
 #endif // _GNUstep_H_NSTextField
