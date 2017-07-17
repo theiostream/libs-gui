@@ -44,6 +44,7 @@
 //
 #import <AppKit/NSGraphics.h>
 
+#import <AppKit/NSAccessibility.h>
 #import <AppKit/NSActionCell.h>
 #import <AppKit/NSAnimationContext.h>
 #import <AppKit/NSApplication.h>
@@ -94,6 +95,7 @@
 #import <AppKit/NSPageLayout.h>
 #import <AppKit/NSPanel.h>
 #import <AppKit/NSPasteboard.h>
+#import <AppKit/NSPasteboardItem.h>
 #import <AppKit/NSPopover.h>
 #import <AppKit/NSPopUpButton.h>
 #import <AppKit/NSPopUpButtonCell.h>
@@ -102,6 +104,7 @@
 #import <AppKit/NSPrintOperation.h>
 #import <AppKit/NSPrintPanel.h>
 #import <AppKit/NSResponder.h>
+#import <AppKit/NSRunningApplication.h>
 #import <AppKit/NSSavePanel.h>
 #import <AppKit/NSScreen.h>
 #import <AppKit/NSScroller.h>
@@ -192,8 +195,11 @@
 #import <AppKit/NSTreeNode.h>
 #import <AppKit/NSUserDefaultsController.h>
 #import <AppKit/NSUserInterfaceValidation.h>
+#import <AppKit/NSUserInterfaceLayout.h>
 #import <AppKit/NSViewController.h>
 #import <AppKit/NSWindowController.h>
+#import <AppKit/NSVisualEffectView.h>
+#import <AppKit/NSUserInterfaceItemIdentification.h>
 #endif
 
 #import <AppKit/PSOperators.h>
