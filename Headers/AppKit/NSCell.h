@@ -99,6 +99,14 @@ enum _NSCellAttribute {
 };
 typedef NSUInteger NSCellAttribute;
 
+typedef NSInteger NSBackgroundStyle;
+enum {
+    NSBackgroundStyleLight = 0,	// The background is a light color. Dark content contrasts well with this background.
+    NSBackgroundStyleDark,	// The background is a dark color. Light content contrasts well with this background.
+    NSBackgroundStyleRaised,	// The background is intended to appear higher than the content drawn on it. Content might need to be inset.
+    NSBackgroundStyleLowered	// The background is intended to appear lower than the content drawn on it. Content might need to be embossed.
+};
+
 enum {
   NSNoCellMask			= 0,
   NSContentsCellMask		= 1,
