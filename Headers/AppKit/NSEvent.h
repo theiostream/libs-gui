@@ -36,6 +36,16 @@
 // For NSTimeInterval
 #import <Foundation/NSDate.h>
 
+typedef NS_OPTIONS(NSUInteger, NSEventPhase) {
+    NSEventPhaseNone        = 0, // event not associated with a phase.
+    NSEventPhaseBegan       = 0x1 << 0,
+    NSEventPhaseStationary  = 0x1 << 1,
+    NSEventPhaseChanged     = 0x1 << 2,
+    NSEventPhaseEnded       = 0x1 << 3,
+    NSEventPhaseCancelled   = 0x1 << 4,
+    NSEventPhaseMayBegin    = 0x1 << 5,
+};
+
 @class NSString;
 @class NSWindow;
 @class NSGraphicsContext;
@@ -366,6 +376,9 @@ enum
 #if OS_API_VERSION(MAC_OS_X_VERSION_10_3, GS_API_LATEST)
 - (NSEventMask) associatedEventsMask;
 #endif
+
+- (NSEventPhase)phase;
+- (NSEventPhase)momentumPhase;
 
 #if OS_API_VERSION(MAC_OS_X_VERSION_10_4, GS_API_LATEST)
 - (NSInteger) absoluteX;
