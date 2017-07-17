@@ -50,6 +50,8 @@ enum {
 - (NSString *) markerForItemNumber: (int)item;
 - (NSString *) markerFormat;
 
+- (NSInteger)startingItemNumber;
+
 @end
 
 #endif 
