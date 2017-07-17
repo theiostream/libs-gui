@@ -41,6 +41,7 @@
 #import <AppKit/NSText.h>
 // for NSFocusRingType
 #import <AppKit/NSView.h>
+#import <AppKit/NSUserInterfaceLayout.h>
 
 @class NSString;
 @class NSMutableDictionary;
@@ -285,6 +286,8 @@ enum {
 - (NSFocusRingType)focusRingType;
 - (void)setFocusRingType:(NSFocusRingType)type;
 #endif
+
+@property NSUserInterfaceLayoutDirection userInterfaceLayoutDirection;
 
 //
 // Setting the NSCell's State 
