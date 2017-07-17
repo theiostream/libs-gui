@@ -319,6 +319,43 @@ APPKIT_EXPORT NSString *NSCreateFilenamePboardType(NSString *fileType);
 APPKIT_EXPORT NSString *NSGetFileType(NSString *pboardType);
 APPKIT_EXPORT NSArray *NSGetFileTypes(NSArray *pboardTypes);
 
+typedef NSUInteger NSPasteboardWritingOptions;
+enum {
+    NSPasteboardWritingPromised = 1 << 9, // Data for a type with this option will be promised, not immediately written
+};
+
+@protocol NSPasteboardWriting <NSObject>
+@required
+- (NSArray *)writableTypesForPasteboard:(NSPasteboard *)pasteboard;
+
+@optional
+- (NSPasteboardWritingOptions)writingOptionsForType:(NSString *)type pasteboard:(NSPasteboard *)pasteboard;
+
+@required
+- (id)pasteboardPropertyListForType:(NSString *)type;
+@end
+
+typedef NSUInteger NSPasteboardReadingOptions;
+enum {
+    NSPasteboardReadingAsData           = 0,	  // Reads data from the pasteboard as-is and returns it as an NSData
+    NSPasteboardReadingAsString         = 1 << 0, // Reads data from the pasteboard and converts it to an NSString
+    NSPasteboardReadingAsPropertyList   = 1 << 1, // Reads data from the pasteboard and un-serializes it as a property list
+    NSPasteboardReadingAsKeyedArchive   = 1 << 2, // Reads data from the pasteboard and uses initWithCoder: to create the object
+};
+
+@protocol NSPasteboardReading <NSObject>
+@required
++ (NSArray *)readableTypesForPasteboard:(NSPasteboard *)pasteboard;
+
+
+@optional
++ (NSPasteboardReadingOptions)readingOptionsForType:(NSString *)type pasteboard:(NSPasteboard *)pasteboard;
+
+@optional
+- (id)initWithPasteboardPropertyList:(id)propertyList ofType:(NSString *)type;
+
+@end
+
 #if defined(__cplusplus)
 }
 #endif
