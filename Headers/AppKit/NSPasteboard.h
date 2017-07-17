@@ -44,6 +44,21 @@ extern "C" {
 @class NSData;
 @class NSFileWrapper;
 
+APPKIT_EXTERN NSString *const NSPasteboardTypeString	 		; // Replaces NSStringPboardType
+APPKIT_EXTERN NSString *const NSPasteboardTypePDF			; // Replaces NSPDFPboardType
+APPKIT_EXTERN NSString *const NSPasteboardTypeTIFF	 		; // Replaces NSTIFFPboardType
+APPKIT_EXTERN NSString *const NSPasteboardTypePNG	 		;
+APPKIT_EXTERN NSString *const NSPasteboardTypeRTF	 		; // Replaces NSRTFPboardType
+APPKIT_EXTERN NSString *const NSPasteboardTypeRTFD	 		; // Replaces NSRTFDPboardType
+APPKIT_EXTERN NSString *const NSPasteboardTypeHTML	 		; // Replaces NSHTMLPboardType
+APPKIT_EXTERN NSString *const NSPasteboardTypeTabularText 		; // Replaces NSTabularTextPboardType
+APPKIT_EXTERN NSString *const NSPasteboardTypeFont 			; // Replaces NSFontPboardType
+APPKIT_EXTERN NSString *const NSPasteboardTypeRuler 			; // Replaces NSRulerPboardType
+APPKIT_EXTERN NSString *const NSPasteboardTypeColor 			; // Replaces NSColorPboardType
+APPKIT_EXTERN NSString *const NSPasteboardTypeSound 			; // Replaces NSSoundPboardType
+APPKIT_EXTERN NSString *const NSPasteboardTypeMultipleTextSelection 	; // Replaces NSMultipleTextSelectionPboardType
+APPKIT_EXTERN NSString *const NSPasteboardTypeTextFinderOptions;
+
 /**
  * Pasteboard contains string data as written by
  * [NSPasteboard-setString:forType:] or [NSPasteboard-setPropertyList:forType:]
