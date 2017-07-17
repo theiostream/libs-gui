@@ -37,6 +37,11 @@
 
 @class NSEvent;
 
+typedef enum NSScrollerStyle {
+    NSScrollerStyleLegacy       = 0,
+    NSScrollerStyleOverlay      = 1
+};
+
 enum _NSScrollArrowPosition {
 #if OS_API_VERSION(MAC_OS_X_VERSION_10_1, GS_API_LATEST)
   NSScrollerArrowsDefaultSetting = 0,
@@ -89,6 +94,8 @@ typedef NSUInteger NSScrollerArrow;
     unsigned control_size: 2;
   } _scFlags;
 }
+
++ (NSScrollerStyle)preferredScrollerStyle;
 
 //
 // Laying out the NSScroller 
@@ -143,5 +150,13 @@ typedef NSUInteger NSScrollerArrow;
 #endif
 
 @end
+
+typedef enum NSScrollerKnobStyle {
+    NSScrollerKnobStyleDefault  = 0,    // dark with light border; good against any background
+    NSScrollerKnobStyleDark     = 1,    // dark; good against a light background
+    NSScrollerKnobStyleLight    = 2     // light; good against a dark background
+};
+
+APPKIT_EXTERN NSString * const NSPreferredScrollerStyleDidChangeNotification;
 
 #endif // _GNUstep_H_NSScroller
