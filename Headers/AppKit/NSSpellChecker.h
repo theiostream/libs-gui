@@ -44,6 +44,12 @@
 @class NSDictionary;
 @class NSMutableDictionary;
 
+typedef enum {
+    NSCorrectionIndicatorTypeDefault = 0,   // The default indicator shows a proposed correction
+    NSCorrectionIndicatorTypeReversion,     // Used to offer to revert to the original form after a correction has been made
+    NSCorrectionIndicatorTypeGuesses        // Shows multiple alternatives from which the user may choose
+} NSCorrectionIndicatorType;
+
 @interface NSSpellChecker : NSObject
 {
 @private
